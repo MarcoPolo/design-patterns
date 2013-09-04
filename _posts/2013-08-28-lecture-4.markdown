@@ -1,0 +1,208 @@
+---
+layout: post
+title:  "Lecture 4"
+date:   2013-08-28 13:06:49
+categories: choosing
+---
+
+# DP Background
+
+## How to choose DPs
+1. Consider how DPs  solve design problems
+2. scan the intents section
+3. study how patterns interrelate
+4. study patters of like purpose
+5. examine causes of redesign
+6. consider what should be variable in your design
+ 
+
+## [ Aspects That vary ] 
+ 
+
+
+
+## How to use DPs
+1. read the pattern once through for an overview
+2. fo back and study the _Structure, Participants, & Collaborations_ secions
+3. look at the source code section to see concrete implementations
+4. choose name for the pattern participants that are menaing in your application content
+5. design classes and interfaces [ not implement - that's later] 
+6. define application specifc names for the operations in the patterns
+7. implement those operations to carry out the responsibilities & collaborations  
+
+
+# Warning! Danger!
+
+Design patterns should not be applied indiscriminately. Often they acieve flexibility by introducing additional levels of indirection and that can complicate your design
+and/or cost you some performance.
+
+A design pattern should only be applied when the flexibility it affords is actually needed.
+
+
+# Factory Method (107)
+
+## Intent
+Define an interface for creating an object, but let subclasses decide which class to inistantiate. FM lets a class defer instantiation to subclasses.  
+
+_idea_: avoid dependencies on a particular class by avoiding direct call to a constructor;
+instead, we want to promote dependency on a type.  
+
+(AKA) Virtual Constructor - in C++ and Java, constructors are not methods and cannot be overridden. In C++, the keyword virtual is used to indicate that a method can be overridden. The pattern allows us to effectively "fake" an overridable constructor
+
+## Excersie
+Q: Name to common used java methods that return an object  
+A: toString() clone()
+
+
+## Overview
+In order to be a FM, the method must:  
+
+1. return a new object
+2. return an instance of a type
+    - i.e., something multiple classes might implement
+3. [ could ultimately be ] implmented by several classes
+
+### Case study: Java
+Consider the following Java entities:
+
+{% highlight java %}
+class javax.swing.BorderFactory
+//Factory class for vending standard object borders
+//whenever possible this factory will handout reference to shared border instances
+
+class java.util.Array's method List<T> asList(T ... a)
+// Returns a fixes size list, backed by the specified array
+
+interface java.lang.Iterable's operation Iterator<T> iterator()
+// returns an iterator over a set of elements of type T
+
+class Object's method String toString()
+//returns a string representation of an object
+
+BorderFactory.createEtchedBorder()
+Array.asList(T ... a)
+foo.toString()
+collection.iterator()
+// Returns 
+
+{% endhighlight %}
+
+
+  
+   
+
+
+---
+   
+       
+
+# Comparison 
+
+_Methods_                               | Returns new Object  | returns an instance of a type | implmented by subclasses  
+-----                                   | --------            | ------                        | ----   
+BorderFactory.createEtchedBorder()      | ?                   | ✓                             | ?            
+Array.asList(T ... a)                   | ✓                   | ✓                             | X  
+foo.toString()                          | ✓                   | X                             | ✓ 
+collection.iterator                     | ✓                   | ✓                             | ✓
+    
+
+# HW 01
+  
+
+1. explain how the intent of the factory method differs from the intent of the border factory method
+(100 min, 400 max) _remember the deliverables format)_   
+
+2. In your own words [200,400], _how does FM promote loose coupling?_  
+
+3. Consider String representing names in the form
+    "First Last"
+    "Last, First" <- note the comma
+
+    "Assume an operation Name makeName(String name) which returns
+  
+| Name |
+| ---- |
+|-first:String |
+|-last:String |
+
+with the fields correctly initialized with either form on String.
+
+_Is this an example of FM_ [200, 400] words?
+
+
+
+__Due: next class__
+
+
+# Implementation
+  
+## 1. GoF canonincal  
+There are two major variations  
+  
+* The Creator provides a _default implementation_ (which may be overridden)
+{% highlight java %}
+public Product makeProduct(){
+    return new DefaultProduct();
+}
+{% endhighlight %}
+this style is usefule when there is a resonable choice for a default product class. 
+_Note:_ in this case, the __Creator__ need not be an abstract class.
+
+* the __Creator__ is abstract and declares an abstract method  
+    ```abstract public Product makeProduct();``` 
+
+in this case, __ConcreteCreators__ _must_ implement the FM
+Note: this is the preferred style when there is not a reasonable defualt product
+  
+  
+--------
+  
+   
+## 2. Parameterized Factory (aka, Simple Factor)  
+
+Note: there are many who believe this is nat an example of FM. It is often called Simple Factory, especially by the non-believers
+
+A _single_ PFM (or SF) can create and return instance of many __ConcreteProduct__ classes;
+the class of the object returned i sbased on the actual parameter supllied.  
+
+* Creator implements PFM
+{% highlight java %}
+    public Product makeProduct(TypeCode type) {
+        if type.equals(Type A) return new ProductTypeA();
+        if type.equals(Type B) return new ProductTypeB();
+
+        throw new NoSuchProductException(type);
+    }
+{% endhighlight %}
+
+* subCreator re-implement PFM
+{% highlight java %}
+    public Product makeProduct(TypeCode type){
+        if type.equals(Type A) return new ProductTypeA2();
+        if type.equals(Type C) return new ProductTypeC();
+
+        return super.makeProduct( type );
+    }
+{% endhighlight %}
+  
+___
+
+
+## Discussion of PFM
+* The __SubCreator__ can override the __CProduct__ for a given TypeCode that is _always_ being handled by the __Creator__.
+This can lead to confusion, or be really cool, depending on your perspective.
+* Use of a __TypeCode__ - especially when implemented as a `String` or `int` - can easily avoid the compiler's type checking mechanism
+and thus allow bugs to pass unnoticed that would have been caught
+* Unless there is some meaningful type common to all the __CProduct__ classes, then the return type devolves to `Product == Object`,
+which forces the _caller_ to know the _actual_ type returned fora  particular TypeCode, so that the caller can cast 
+(or otherwise treat the object preferentially) to it's actual type [as __Object__ doesn't declare many "interesting" methods]
+
+(Also true for FM)  
+* The Creator is typically the FM's client! The __Creator__ almsot always contains code that called the  (P)FM. 
+ Specific __Creators__ are usually meant to work with specific __CProducts__ - which is _why_ the FM is overridden by the __CCreator__ class.  
+   * something
+
+
+
+
+
