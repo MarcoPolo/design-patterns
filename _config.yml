@@ -1,6 +1,6 @@
 name: Design Patterns
 markdown: redcarpet
 redcarpet:
-  extensions: ["no_intra_emphasis", "fenced_code_blocks", "autolink", "tables", "with_toc_data", "disable_indented_code_blocks"]
+  extensions: ["no_intra_emphasis", "fenced_code_blocks", "autolink", "tables", "with_toc_data", "disable_indented_code_blocks", "strikethrough"]
 pygments: true
 safe: true

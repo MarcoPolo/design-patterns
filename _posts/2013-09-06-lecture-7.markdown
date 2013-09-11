@@ -1,0 +1,99 @@
+---
+layout: post
+title:  "Lecture #7"
+date:   2013-08-28 13:06:49
+categories: 7 factory method FM
+---
+
+# Adminstrivia  
+    * Read Template Method (325)
+
+# Implementation (cont.)
+  
+3a. ~~Pair a constant method with a FM~~
+Ditch the FM: Just use CM
+
+# Discussion: 3 & 3a
+
+Q: What is the implication of the __productClass__ variable not being decalred final?  
+A: Can be changed later
+
+Note: we _could_ move the responsibility for maintaining the __productClass__ variable to the __Creator__.
+if there is more than one __CCreator__ type used in the application, they would be sharing the same variable 
+(hence, the same __CProduct__) - the most recently assigined value [Again, probably _undesirable behavior_]
+  
+# 4) parameterice the CCreator with a Prototype (117); The FM returns clones of the Prototype
+
+{% highlight java %}
+    static private Product productPrototype;
+    static public void setProduct(Product p) {
+        productPrototype = p;
+    }
+
+    public Product makeProduct(){
+        return productPrototype.clone();
+    }
+
+{% endhighlight %}
+
+If __productPrototype__ is _not_ ``` static ```, then each instance of the __CCreator__ would have its own Prototype object and they could have different __CProducts__.
+  
+(can lead to bizarre systems)
+ 
+# 5) Use Templates/Generics/parameterized classes  
+avoids the need to _explicitly_ subclass the __Creator__ to specify the __CProduct__ type. 
+(could argue that it's still _implicitly_ subclassing - it's just the compiler generating the subclass rather than the programer).
+
+{% highlight java %}
+    class Creator<P extend Product> {
+
+        // ...
+
+        public Product makeProduct() {
+            return new P();
+        }
+
+        //...
+    }
+    
+{% endhighlight %}
+
+Usage example:
+    ``` Creator<DaveCoProduct> creator = new Creator<DaveCoProduct>(); ```
+
+It could be argued that this is an alternative to FM rather than a variation vecause it 
+explicitly ducksthe issue of sublassing.  
+ [not to mention that there is no common type for ``` Creator<Foo> ``` and ``` Creator<bar>```.]
+
+# Template Method (325)
+
+## Intent
+Define the skeleton of an algorithm as an operation, deferring some steps to subclasses.  
+TM lets subclasses redefine certain steps of an algorithm w/o chaning the algorithm's structure
+
+
+## Initial Comments
+* One of the most frequently used design patterns
+* it's an example of "good" inheritance
+* depends on the _Hollywood Principle_ 
+    * "Don't call us, we'll call you."
+    * the _superclass_ calls an operation defined in the _sub_class!
+    * _inverted control structure_ (the "normal" being when the subclass calls methods defined by the superclass;)
+
+## Motivation
+___Goal___: define an algorithm _once_, allow sublasses to redefine cetrain (reselected) steps as necessary.
+
+## Physical example
+Baking a cake consists of...  
+1. Preheat the oven  
+2. grease pans  
+3. prepare the batter  
+4. pour batter into ban  
+5. put pans in oven and bake  
+6. remove from oven and cool  
+
+  
+Certain steps of this process are _invariant_; while others (3,5, & 7) depent on the the _kind_ of cake being made.  
+The _overall_ alg. being thesame in all cases; we just wnat to costumize certain steps.
+
+

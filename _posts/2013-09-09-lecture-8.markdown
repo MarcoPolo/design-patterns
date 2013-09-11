@@ -1,0 +1,92 @@
+---
+layout: post
+title:  "Lecture 8"
+date:   2013-09-09 13:06:49
+categories: template method
+---
+
+# Administivia
+* Read: Strategy (315)
+* Read: Template Method
+* HW 2 & 3 online
+
+
+# Template Method (325)
+There are several kinds of operations that can be used to implement a TM   
+
+* _concrete_ (either on the __Concrete__ class or client classes)   
+* _concrete Abstract class_ ops   
+* _primitive_ ops   
+* _factory methods_ ops  
+* _hook_ ops  
+  
+( if this "concrete op" on the Concrete class isn't  concrete abstract class op, primitive, FM, or hook, then what the heck is it?
+ How can I (as the __Abstract__ class) possibly foresee operations that the concrete class adds to its interface???   
+
+ This list really boils own to three...
+
+| __Method__       | __Abstract Class's role__ | __Concrete class's role__
+|-------------|:-------------------------:|------------------------:|
+|_Concrete_   | define                    | _not_ override          |
+|_Primitive_  | declare                   | _must_ override         |
+|_Hook_ *     | defined default behavior  | _may_ override          |
+
+Q: why didn't FM make my condensed list of op types
+A: Just a special case of...    
+
+* In the case where there _is_ a reasonable default behavior, then it's a _hook_   
+* Otherwise, it's a _primitive_.
+
+That said, it's still useful to say "FMs can be used in a TM" because of the semantic meainng:
+FM's purpose is to create instance of a type.
+
+---------
+
+#Implementation
+1) _access control modifiers_ can be used to ensure that _primitives_ don't "leak" into the type's interface.
+ Declare primitives as __protected__ instead of __public__
+
+2) _minimize the number of primitive ops_ - the more primites one declares, the more work
+the implemntor of the __Concrete__ class will have to do. Therfore, if there is a 
+reasonable default behavior, hake it a _hook_ instead.
+
+Note: there is a potential downside ot this advice:
+if one forget ot implement a primitive, the compiler will yell at you. But if you forget to override a hook, the compiler won't give any warning.
+
+#designing and refactoring hierarchies for reuse
+    General rule of thumb: move _behavior_ __up__ in a hierarch, move _state_ down 
+
+Ken Auer's 4 heuristic
+1) _define classes by behavior, not state_  
+"What does it do?" NOT "What does it know?"
+
+2) _implemtn behavior with abstract state_Behaviors should be written in terms of _accessors_ and _mutators_
+
+3) _identify message layers_  
+Implment behaviors in terms of a small set of override-able "kernel methods"
+
+4) _defer identificaton of state variables_
+Accessors and mutators are _declared_ in the _base_ class, but are implmented by the csubclasses (specifically, those in which the data members are defined)
+
+
+# A rather pirimitive method (ar ar) for generating TMs
+1. Implment everything in a single, well comemented method
+2. based on the comments, divide into logical steps
+3. implement those steps as method
+4. replace steps with calls to thos methods5. use _constant methods_
+6. lather-rinse-repeat for each step method
+
+
+# Good programmin style guideline
+Every statement in a method should be at the _same_ abstraction level
+
+Compare: 
+
+```
+    Balance += deposit; //very specific
+    //vs.
+    updateBalance(deposit)
+    //vs.
+    updateBalance(deposit) //more abstract
+    
+```
