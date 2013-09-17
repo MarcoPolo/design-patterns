@@ -1,0 +1,338 @@
+---
+layout: post
+title:  "Lecture 9"
+date:   2013-09-11 13:06:49
+categories: template method
+---
+
+# Administrivia  
+* Nothing new
+
+# Template Method (325)
+
+## Implementation (cont.)
+
+### Modifiers * methods  
+Q: Which access modifiers (in languages which support them) should be used with 
+the TM an dthe operations it calls?
+  
+  
+| modifier       |      method    |
+| ---------------|---------------:|
+| public/protect | concrete (when generaly useful, not TM specific) |
+| protected      | hook           |
+| abstract protected | primitive  |
+| private final  | invariant steps (concrete methods that _are_ TM specifc) |
+| ☨              | factory methods| 
+| ☨☨             | TM             |
+
+* ☨ - depends on whether
+    a) there is a default implementation [whether abstract or not]
+    b) who else should be able to use it [whether public or protected]
+
+
+* ☨☨ - depends upon who is supposed to cal it
+
+
+###  Some  things to ponder on your own 
+Q1: Is an _inverted control strucutre_ an integral part of TM? Justify your answer.
+    Could you use TM without _inverted control strucutre_
+
+Q2: TM relies on _inheritance_. Would it be possible to get the same functionality using _object composition_?
+If so, what would be some of the trade-offs? If not, why not? 
+
+Q3: Isn't TM just plain ol' _procedural decomposition_ guised up for OOP?
+
+# HW 3 (Magnitude) redux
+Q: Could ` Magnitude ` have a data member + ` getMagnitude() ` ?
+A: Not only can a ` getMagnitude() ` _not_ be defined in the base class ` Magnitude `,
+ because there is no meaningful common type that all instances of magnitude can be reduced to
+  
+Q: What was meant by " `Magnitude` is not meant to define a type? "
+A: instances of subclasses of `Magnitude` are _not_ substitutable for `Magnitude`
+
+# Strategy (315)
+
+## Intent
+Define a family of algorithms, encapsulate each one, and make them interchangable.
+ Strategy lets the algorithm var independently from the clients that use it.
+
+## Example Applications  
+* video compression
+* encryption
+* bitmap represntation
+* data vidualization (tabular, char: bar, line, pie, ...)
+* GUI component layout managers
+* auto insurance quote  
+    * states have different regulations & asess penalty points in different ways
+
+
+## it's an alternative to _brute force_
+    
+    {% highlight java %}
+        switch (whichAlgorithmToUse) {
+            case alg1: alg1(data); break;
+            case alg2: alg2(data); break;
+        }
+        ..
+
+    {% endhighlight %}
+
+## Facilitates code reuse
+when algorithms are embedded in the client class's code, it makes it hard/impossible
+to reuse the alogorithm's implemntation in a different context
+
+Q1: Why not just lump all the algorithms together in a _utility class_ that could be 
+shared by mutliple applications?
+
+A1: (assuming we want to choose the algorithm at runtime) we'd need to make a choice,
+thus requiring conditional logic
+
+A2: All the alogorithms need to be present in memory, even if the application only uses one of them.
+
+A3: Clients would need to be modified when new algorithms were added to 
+the utility class ( in order to use the new algorithms )
+
+A4: adding new algorithms would entail modifying the utility class: 
+what happens when we don't have access to the source code?
+
+# Lecture 10
+
+# Administrivia
+* Read State(305)
+* Read Strategy(305)
+
+# Strategy (315)
+
+## Structure
+<uml here>
+
+
+## Usage  
+* The __Context__ (the Strategy's client) works with a __CStrategy__
+    - _may_ use the same Strategy for the program's entire execution
+    - _may_ use different Strategies as the program executes
+
+* the __CStrategy__ may be set
+    - a __mutator__ on the  _Context_ which allows one to choose the __CStrategy__
+    - passed as a parameter to the _contextInterface()_
+    - specified as a type parameter (when __Context__ is a generic/template/parametric class)
+
+* anytime the client needs the results of the algorithm, it forwards the requet to __CStrategy__.
+
+## Implementation
+must choose between a push model or a pull model
+
+## Push 
+the client is responsible for passing data along with the request  
+* con: must pass _all_ the information that _any_ member of the algorithm family might need,
+ this is because we have to provide a single interface ` algorithmInterface() ` 
+ that is usable with any __CStrategy__ (some may require information that other do not).
+ Further, since we shouldn't make assumptions about which __CStrategy__ will handle
+ the reqest, we can't safely pass _null_ values for things we think the algorithm will ignore
+
+
+## Pull
+the __CStrategy object__ requests the data it needsfrom the client    
+  
+* how does the Srategy know who the client is ( so it can make the request)?   
+* pass a reference to the client when the __CStrategy__'s constructor is invoked    
+    * Con: Strategy object can't be shared
+    * Pro: makes for clean code
+* con: tigher coupling between the client and __Strategy__
+* the client _must_ support a known interface in order for a __Strategy__ to query 
+  the client for the needed data
+
+  
+    
+
+# HW02 [Java's sort() takes a comparator] redux
+# TM?    
+* The __Comparator__ is being used to customize in a (sort) algorithm.
+* However Template Method uses _subclassing_ to redefine a template behavior
+
+# Strategy?
+* passing an object that implements an algorithm ( the __Comparator__) that is suitable
+for comparing the actual typeof data in the collection.  
+* however, Strategy relies on object composition
+
+# Functor
+A _functor_ in OOP, is an object that represnts a function; useful even with function pointers
+because they contiain state
+
+There are a lot of people who would argue that the use of __Comparator__ by `sort()` is an example of the __Strategy__
+patter. However, I would argue that is really an
+example of th euse of a functor, because it is being used to parameterize an _operation_ rather than an _object_
+
+in the spirit of full disclosure that are some that believe thta functor...
+"is a perfect realization the the Strategy pattern."
+
+GoF talks about Functors in __Command__ pattern, but not in __Strategy__
+
+# State (305)
+
+
+
+# Lecture 11
+
+# Administrivia
+* Read State(305)
+* Read Strategy(305)
+* Read Abstract Factory(87)
+
+
+# State (305)
+## Intent
+Allow an object to alter it's behavior when it's internal state changes.
+The object will appear to change it's class.
+
+## Applicability  
+* use when an object's behavior is state-dependent - where the object's state is determined at runtime and may chnage
+* use wen state-dependent behaviors may be implemented by multiple operations - i.e.,
+ when an object changes state, the behavior of multiple ops may be afffected
+
+{% highlight java %}
+ class Order {
+     OrderProcessor processor = ...;
+     StateToken state = CREATED;
+
+     submit() {
+         switch ( state ) {
+             CREATED:
+                error( "Mustbe validated first.");
+            VALIDATED:
+                processor.submit( this );
+                state = SUBMITTED;
+            SUBMITTED:
+                error( "Can't submit same order twice." )
+            CANCELLED:
+                error( "This order has been cancelled." )
+         }
+     }
+     
+     validate() {
+         //also has state dependent behavior
+         switch ( state )
+             //...
+     }
+ }
+
+{% endhighlight %}
+
+-----
+
+Note: there are multiple methods that have conditional logic used to determine _what_ to do depending on the Order's current state
+
+In terms of the _specific implementation:_  
+
+* Must execute decoding logic every time `submit()` is called
+* Similar control structures exist in other methods
+* _state transitions_ are embedded in those methods
+
+From a code understanding & maintenance perpective:  
+
+* Relatively hard to grasp the relationship between states because the transitions are buried in the code
+* adding new states will be laborious and error prone because every method
+containing the dcoding structures will need to be updated.
+  
+
+
+## Applicability (Cont.)
+* use when the context has a limited, well-defined set of possible states
+* the context must have well-defined transitions between states  
+    - it's inappropriate to use the `State` when state changes are inconsistent or subjective
+
+
+## Example: Translated to State pattern
+
+The state pattern encapsulated state-dependent behavior in __separate__ _state objects_
+
+{% highlight java %}
+
+class Order {
+   OrderProcessor processor = ...;
+   StateToken state = CREATED;
+
+   StateToken state = new CreatedState();
+
+   submit (){
+       state.submit();
+   }
+   
+
+}
+
+{% endhighlight %}
+
+Note: don't get hung up on how state objects communcate with the context
+
+
+There are several ways the can be implemented  
+* in some langauges (e.g., java) have _nested classes_
+* pass a reference to the 
+
+{% highlight java %}
+    class CreatedState extends State { 
+        //or implements
+        submit(){
+            error( "Must be validated first" )
+        }
+    }
+{% endhighlight %}
+  
+* nested class
+* pass reference to the __State__ object when invoking its methods
+* &c.
+
+------- 
+
+### observe: the control structure has been eliminated!  
+* state transitions are _more_ explicit
+    * no longer buried in the middle of a conditional block
+* overall, easier to understand and maintain
+
+### " The object will appear to change its class."
+a __class__ defines the properties and behaviors of its instances; because the object's 
+behavior may vary dramatically depending upon its state, that let the GoF to use
+the phrase "wil appear to change it class." They are focuses on a _behavioral_ definition
+of class rather than a _code_ definition of class. From the perspective of the defining 
+code (and type system) the class doesn't change.
+
+  
+    
+
+The distinction here is between:
+* apparent class - what kind of think does this object _behave_ like?
+* actual class - which class's constructor was used to instantiate ths object?
+
+## Whatif a language allowed an object's actual class to to change
+This would allow the use of combined __State-Context__ objects 
+(remember in the canonical pattern, we're using different objects to change the 
+Context's behavior) and thus there would be differnet State-Context classes, 
+one for each state, and the object would migrate between them as its state changed.
+
+
+## What kind of mechanisms could be used to implement this?
+1> become (_insanceOfAnotherClass_)  
+  
+* first, we'd need  to instantiate _instanceOfAnotherClass_ and initialize it with _this_ object's current attrivutes.
+* _instanceOfAnotherClass_) may have more or fewer attributes than the class from which we are transforming.
+Thus we'll stipulate that the set of classes between which one can 
+migrate must suppor the unoin of the attriutes _required_ by each of
+the classes in the set.  
+
+* Finally, point all references to the original object to instance of another class
+* Smalltalk supports this
+
+2> changeClassToThatOf(_AnotherClass_)
+* we'll require that _ThisClass_ and _AnotherClass_ be drived from a common base class
+[note: this was not a requirement of `becomes()` above]  
+* the subclasses may not define additional instance variables  
+* supported by a dialect of smalltalk (IBM's VisualWorks Smalltalk)
+
+# Consequences of class mgiration?
+It makes subclassing the `Context` more difficult
+
+# HW 04
+If you really could change class, would there be any reason to use the
+State pattern? [200,500] words.
