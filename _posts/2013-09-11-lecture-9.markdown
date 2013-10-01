@@ -336,3 +336,160 @@ It makes subclassing the `Context` more difficult
 # HW 04
 If you really could change class, would there be any reason to use the
 State pattern? [200,500] words.
+
+# Adminsitrivia 
+Read: Abstract Factory ( 87 ) & bulider (97)
+
+# State (305) Cont.)
+## Implementation issues
+How does the Context get updated on a state transition?
+
+  
+    
+
+The __CState__ wil be responsible for "setting" the __Context's__ state variable   
+
+* Dirctly:
+    context.state = FooState;
+
+ directly
+
+
+
+n: 
+    context.setFooState();
+
+* via a parametericed operation:
+    context.setState( FooState );
+   
+## How does the CSTATE know its Context?
+
+* the Context passes a reekence to itself when forwarding request to the __CState__:
+    this.state .foo(this ) ;
+* the Context is passes to the __Cstate__'s constrctor so that the __CState__ can maintian a reference/ppointer to it.
+* [requires language support]  CStae is a _nested class_ and it implicitly know what it's context is
+and has acess to all the private stuff
+
+## when are concrete stae objects instantiated?
+
+  
+    
+* Instantiaded as needed,  you have two options. 
+    * Instantiate as needed, and discard on transition
+    * more complicated case is to each __Context__ is isntatioated:
+        * make all the possible __CState__ object
+
+# Where should data specific to one particularstate be localized?
+any data that is specific to _a state_ should be localized in corresponding __CState__.
+
+# HW04 reduxQ: If you could really change class would there be any reason to use the state pattern?
+
+A:
+    an (potential) unintended consequence: we could no longer use subclassing to extend Context related behaviorsthat's because instead of exting a _single_
+    context class, we would need to extend all the c__StateContext__ classes 
+
+
+# Abstract Factory (87)
+## Intent
+Provide an interface for creating farmilies of related or dependent objects, without specificng their concrete classes.
+
+## Motivation
+The notion of a __MenuBar__ having Menus 
+which ar ein tun composed of __MenuItms__ 
+( and __menu__ themselves __MenuItems!__)
+is a pretty common theme in GUI toolkits.
+__Abstract Factory__ Lets you create instances of different product classes together
+
+
+[example: in java you can't mix Awt with swing component. In C++ you can't mix QT with  and GTK
+classes in a toolkit are meant to be used together.
+
+#Implementation
+Type 1: AF with FMs  
+  
+* Use inhertance to override the FMs the __Creator__ that is the concreate abstract factories super type (CAF) is abstract (or interface)
+* subclasses must implemnt the factory method for elach product type
+   * Microvariation: using constatnt methods.
+
+* use inhheritance to overide the initalize
+    *   (the __FMs__ are concrete: the __Class__ objects are used to instantiate __Products__
+
+ 
+* override the intiliation code for each __CCreator__
+* FMs are written in terms of __Class__ objects the __Creator__ is abstract and has instance variables for each __Product__ typeof hold __Class__ objects
+
+... Stuff ...
+
+# HW 05
+
+1) Implementation techniques 3 & 5 require _something_ to configure to AF. Should that knowledge be localized? If so where?
+
+2) _Why_ is it easier to extend a SF-based AF than a FM based on to support addition opperations?
+
+# HW 05 redux
+
+1) Yup!
+
+If so, where:
+either:  
+* in a _subclass_ of the AF, _or_
+    * the (subclasses) AF's constrcutor would know what __Product__ types to us
+* in a FM (better choice)
+  
+Aside:
+{% highlight java %}
+class ChowAF<Budget, Regular, Splurge>{
+    Budget b;
+    Regular r;
+    Splurge s;
+    
+    ChowAF() {
+        b = new BudgetMeal();
+        r = new RegularMeal();
+        s = new SplurgeMeal();
+    }
+
+    BudgetMeal makeBudgetMeal() {
+        return b.clone();
+    }
+
+    // ...
+}
+
+{% endhighlight %}
+    
+
+2)  Adding a new method to support the __Product__ type will require that the base class/interface be modified, 
+necessitation the updating of all of its 
+subclasses so that they support the nuew operations
+
+
+# Builder (97)
+## intent
+Separate the construction of a complex obejct from its representation so that the same 
+construction process can create different representations
+
+
+## Motivation
+Consider the _process_ of making a bacon+pineapple+jalapeno pizza:
+* prepare dough
+* slather with sauce
+* sprinkle with cheese
+* sprinkle with toppings
+    * bacon
+    * pineapple 
+    * jalapenos
+    
+
+## There are many possible variations within the same product type
+* small, medium, large, XXL
+
+## Within the _actual_ product type
+* Pizza
+* depictions of pizzas (i.e., images)
+* recipe: step-by-step instructions for making the pizza
+* &c.
+
+
+
+... Stuff ...
