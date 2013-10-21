@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Prototype</title>
+        <meta name="viewport" content="width=device-width">
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" href="/css/syntax.css">
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/main.css">
+
+    </head>
+    <body>
+
+        <div class="container">
+          <div class="site">
+            <div class="header">
+              <h1 class="title"><a href="/">Design Patterns</a></h1>
+              <a class="extra" href="/">home</a>
+            </div>
+
+                <h2>Prototype</h2>
+<p class="meta">25 Sep 2013</p>
+
+<div class="post">
+<h1 id="toc_0">Administrivia</h1>
+
+<ul>
+<li>Exam 1 next Tuesday night</li>
+</ul>
+
+<h1 id="toc_1">Prototype (117)</h1>
+
+<h2 id="toc_2">Intent</h2>
+
+<p>Specifies the kinds of objects to create using a protoypical instance, and creates new
+objects by copything the prototype.</p>
+
+<h2 id="toc_3">Aside: &quot;first class object&quot;</h2>
+
+<p>simple difnition: something that can be passes as an argument to a function</p>
+
+<h2 id="toc_4">Initial comments</h2>
+
+<p>In a language which treates <strong>clases</strong> as <em>first class objects</em> - e.g. Smalltalk &amp; java - the
+<strong>Prototype</strong> pattern is competing with object construction via a <strong>class</strong> object.</p>
+
+<ul>
+<li>Protoype: You&#39;re the kind of think I want! Clone yourself!</li>
+<li>Reflection: You rerpesent the class of the thin I want! Make me an instance of that class!</li>
+</ul>
+
+<p>In the case wher all you want is a n instance of a class, it doesn&#39;t make much difference
+- from the programmer&#39;s perspective - wherther we clone a protoype or instruct a
+class object to instantiate the approptiate object.</p>
+
+<p>So.. when would one have cause to choose <strong><em>Prototype?</em></strong>
+When...   </p>
+
+<ol>
+<li>the deisred object&#39;s initial state is known to differ from the existing object [see <em>boilerplate</em> ]<br></li>
+<li>The initial state is determined at runtime [thus not known at compile time] <em>or</em><br></li>
+<li>the initialization process is expensive: copying an existing [and thus &quot;paid for&quot;] object is cheaper<br></li>
+</ol>
+
+<h1 id="toc_5">Implementation</h1>
+
+<h2 id="toc_6">How to handle cloning an object that has references/pointers?</h2>
+
+<h3 id="toc_7">Deep copies v shallow copies</h3>
+
+<ul>
+<li>A <em>shallow</em> copy has the same attribute <em>values</em><br></li>
+<li>thus can share data with the original</li>
+<li>A <em>deep</em> copy has the same attribute <em>values</em> </li>
+<li>thus has it&#39;s own copy of the original data</li>
+</ul>
+
+<p>When an <em>attribute object</em> [i.e. an object that serves as the value of another object&#39;s attrivute] 
+is immutable then sharing is desriable. Mutable attributes should be shared only with caution.</p>
+
+<div class="highlight"><pre><code class="java"><span class="kd">class</span> <span class="nc">Foo</span> <span class="kd">implements</span> <span class="n">Cloneble</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="n">Foo</span> <span class="nf">clone</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="n">Foo</span> <span class="n">fooClone</span> <span class="o">=</span> <span class="o">(</span><span class="n">Foo</span><span class="o">)</span> <span class="kd">super</span><span class="o">.</span><span class="na">clone</span><span class="o">();</span> <span class="c1">//shallow</span>
+            <span class="c1">//where appropriate replicate selected attrivutes with clones</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span> <span class="n">CloneNotSupportedException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c1">//this cannot happen! we support cloneable </span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">InternalError</span><span class="o">(</span><span class="n">e</span><span class="o">.</span><span class="na">toString</span><span class="o">())</span>
+        <span class="o">}</span>
+
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+
+<p><em>don&#39;t do this</em></p>
+
+<div class="highlight"><pre><code class="java"><span class="kd">class</span> <span class="nc">Foo</span> <span class="kd">implements</span> <span class="n">Cloneble</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="n">Foo</span> <span class="nf">clone</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">Foo</span> <span class="n">f</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Foo</span><span class="o">();</span>
+        <span class="n">f</span><span class="o">.</span><span class="na">attribute1</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">attribute1</span><span class="o">;</span>
+        <span class="n">f</span><span class="o">.</span><span class="na">attribute2</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="na">attribute2</span><span class="o">.</span><span class="na">clone</span><span class="o">();</span>
+
+        <span class="k">return</span> <span class="n">f</span><span class="o">;</span>
+
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+
+<p>Why is this bad?</p>
+
+<p>A1: Prone to object slicing
+if we had some object that became subclassed by tiger, then </p>
+
+<p>A2: 
+Can&#39;t access superclass&#39;s private attrivutes.
+Even if the class has now subclasses but is a subclass of something with private 
+attributes, we can neither read nor write those attributes from the scope of this class.</p>
+
+<p>A3: A connanscene issue
+Even if the class has no subclasses, it&#39;s still a connascenec issue: If the classes defn&#39; ever changes,
+we have to change to method </p>
+
+<p>----- Stuff ----</p>
+
+<hr>
+
+</div>
+
+
+            <div class="footer">
+              <div class="contact">
+                <p>
+                  Your Name<br />
+                  What You Are<br />
+                  your@email.com
+                </p>
+              </div>
+              <div class="contact">
+                <p>
+                  <a href="http://github.com/yourusername/">github.com/yourusername</a><br />
+                  <a href="http://twitter.com/yourusername/">twitter.com/yourusername</a><br />
+                </p>
+              </div>
+            </div>
+          </div>
+        </div> <!-- /container -->
+
+    </body>
+</html>

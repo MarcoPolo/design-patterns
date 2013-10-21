@@ -1,0 +1,171 @@
+---
+layout: post
+title:  "Memento"
+---
+
+# Initial Comment
+An object may have a lot of state - how much of that stat actually needs to be captured
+depends upon the application's needs 
+
+
+# Structure ...
+
+# Mechanism 
+In java, It's particulary easy to safely implement Memento
+* define an empty interface `Memento`
+* Whenever an `Originator` is asked to create a `Memento`, it'll construct and return an
+  instalnce of an object that implemnts that interface (in an `Originator` specific wat). 
+* the class implementing `Memento` can be a private member of the  `Originator class.  
+
+# Implemntation issues
+As with `Prototype`,  one must decide hwther a deep copy is
+necessary or a shallow copy will suffice . 
+
+
+  
+    
+if one is creating a lot of Memontos ( or even just a few of a prticularly heavy
+ `Originator`) it may take a great deal of memory to hold them.
+
+-----
+
+The memory reqs can be mitigated by having the `Mementos` store just _incremental_ changes
+- i.e., the sutff that has been odified since the last __Memento__ was created.
+
+In java, it's pariculary easy to _safely_ implement `Memento`
+  
+* e.g. with a bitmap (image), preserve the affected region ( rather than the entire image)
+  then we can restore the image to its original state by just repainting the affected
+  region with the preserved data
+
+A `Memento` may save the `Originator`'s
+
+* entire state
+* a sub-set of its state
+* just the recently changed aspects
+
+# Example in Java
+```
+Class Originator {
+    private int a;
+    String[] s;
+
+    private class OriginatorMemento implemnts Memento {
+        int aCopy;
+        String[] sCopy;
+
+        OriginatorMemento(){
+            aCopy = a;
+            sCopy = s; //might want to duplicate array
+
+            void restore ( Originator anOriginator ) {
+                if (anOriginator != Originator.this ) {
+                    throw new Exception("Bad!");
+                }
+
+                a = aCopy;
+                s = sCopy;
+            }
+        }
+
+        public Memento makeMemento() {
+            return new OriginatorMemento();
+        }
+
+        public void restore(Memento m) {
+            ((OriginatorMemento) m).restore(this);
+        }
+    }
+}
+```
+
+
+Java note: had we not passed a reference to this in the call to Memento's restore, the
+memento created by a different originator could be used to create a brain transplat.
+
+# Cursor 
+This is an _alternatiive_ to the Iterator pattern. 
+
+Note: the cursor is not capturing any of th ecreated objects's state, but rather a state
+of traversal over that object's elements.
+
+# Example in Java
+```
+interface Cursor { 
+}
+
+class Gizmo {
+    private Widget[] widget;
+
+    private class GizmoCursor implemnts Cursor {
+        int i = 0;
+    }
+
+    public Cursor makeCursor(){
+        return new GizmoCursor();
+    }
+
+    public void first ( Cursor c){
+        ((GizmoCursor) c).i < widget.length;
+    }
+
+    public Widget currentElement( Cursor c ){
+        return widget[ ((GizmoCursor) c).i ];
+    }
+
+    public void next( Cursor c ) {
+        ++((GizmoCursor) c).i;
+    }
+
+    //other gizmo operations elided
+    }
+}
+```
+
+# Observation
+
+The Gizmo class defines an interface that permits multiple simultaneous traversals across
+its elements: the state of each traversal is maintained in an _independent_ `Cursor`
+object.
+
+
+# Adminsitrivia more than .5 done :(
+* Semester more than 1/2 done :(
+* HW Mebbe
+
+# Memento (283)
+# Mementos & Transactions
+
+A _transaction_ is a set of operations, _all_ of which must be completed in order for any
+of them to take effect. __Memento__ will give us the ability to...
+  
+* roll-back steps prior to the transaction being committed
+* undo previously applied operations
+
+# Canonical way of performaing a transaction
+1) make a Memento
+2) perform operawtion(s) on the Originator
+3) _validate_ the __Originator__
+4) if the __Originator's__ state is inconsitent, restore the prior state from the memento
+
+# Griffin's "What if?" protocol
+This is an _alternative_ to using __Memnto__ that is based on `Prototype` 
+1) clone the Originator [ the `Prototype` ]
+2) perform operation(s) on the clone
+3) _validate_ the clone.
+4) if inconsistent, throw an exception  
+    * note: the    `Originator`/`Prototype` is _unchanged_
+    else repeat the operations on the `Originator/Prototype`
+
+
+Con: Operations must be perfformed thice (when successful)  
+con: some operations "consume resources" and thus performing the twice is going to have
+unintended consequences:
+   
+Pro: originator is _never_ in an inconsistent statee  
+pro: object identity is goin to be preserved  [object's identity wouldn't be preserved had
+we decided (after a successful step 3) to simply replace the Originator with the clone]:
+especially important when objects are persisted in a database.
+
+
+

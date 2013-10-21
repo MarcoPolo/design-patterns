@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Builder</title>
+        <meta name="viewport" content="width=device-width">
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" href="/css/syntax.css">
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/main.css">
+
+    </head>
+    <body>
+
+        <div class="container">
+          <div class="site">
+            <div class="header">
+              <h1 class="title"><a href="/">Design Patterns</a></h1>
+              <a class="extra" href="/">home</a>
+            </div>
+
+                <h2>Builder</h2>
+<p class="meta">23 Sep 2013</p>
+
+<div class="post">
+<p>The <strong>Director</strong> is reusable: we can use the smae <em>process</em> to create different repsesntiaons.</p>
+
+<p>the <strong>CBuilder</strong> is reusable: it encapsulates knowledge about how to assemeble a particular <strong>Product</strong> <em>representation</em></p>
+
+<p>This scheme provides a <em>strong encapsulation boundary:</em> the repesntation is decoupled from the constrcution process.</p>
+
+<p>The <strong>Builder</strong> pattern provides fine-grained control over <em>how</em> an object(-structure) is assembled/configured.</p>
+
+<p>all the other GoF <em>Creational Patterns</em> allow on to requiest only a praticular <strong>Product</strong> type- the don&#39;t allow one to get involved with the 
+assembly/configuration process.</p>
+
+<p>Note: this is <em>not</em> to say that the implementor of one of those other patterns cnnot specify how an object(-stucture) is created, because they most cetrainly can - e.g.   </p>
+<div class="highlight"><pre><code class="java language-java" data-lang="java"><span class="n">Foo</span> <span class="nf">makeFoo</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">Foo</span> <span class="n">f</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DaveCoFoo</span><span class="o">();</span>
+    <span class="n">f</span><span class="o">.</span><span class="na">addBell</span><span class="o">(</span> <span class="k">new</span> <span class="n">LargeClangyBell</span><span class="o">()</span> <span class="o">);</span>
+    <span class="n">f</span><span class="o">.</span><span class="na">addWhilstle</span><span class="o">(</span> <span class="k">new</span> <span class="n">ShrillAnnoyingWhistle</span><span class="o">()</span> <span class="o">);</span>
+    <span class="k">return</span> <span class="n">f</span><span class="o">;</span> <span class="c1">// retuns a Foo configure with Bells &amp; Whistles</span>
+<span class="o">}</span>
+</code></pre></div>
+<ul>
+<li>but how this differs s that when <code>makeFoo()</code> is called, one <em>always</em> gets a <code>DaveCoFoo</code>
+configured with a <code>LargeClangyBell()</code> and <code>ShrillAnnoyingWhistle()</code> 
+clients of this method weren&#39;t given the opportunity to:<br></li>
+<li>to customize the accessories </li>
+<li>to change the representation</li>
+</ul>
+
+</div>
+
+
+            <div class="footer">
+              <div class="contact">
+                <p>
+                  Your Name<br />
+                  What You Are<br />
+                  your@email.com
+                </p>
+              </div>
+              <div class="contact">
+                <p>
+                  <a href="http://github.com/yourusername/">github.com/yourusername</a><br />
+                  <a href="http://twitter.com/yourusername/">twitter.com/yourusername</a><br />
+                </p>
+              </div>
+            </div>
+          </div>
+        </div> <!-- /container -->
+
+    </body>
+</html>

@@ -1,0 +1,173 @@
+---
+layout: post
+title:  "Iterator"
+---
+
+# Administrivia 
+* HW 07:
+revisist your `Composite` HW
+* make it maintain the invarian using TM and use...
+
+
+```java
+public String toString(){
+    return (parent == null) ?
+        instanceID + "ist the root" :
+        instanceID + " is the child of " + parent;
+}
+```
+
+* define an interface Iter<T> that has GoF (or Dave) semantics.   
+* for each subclass of component implmenet an appropiate Iter<T> over it's children.   
+* Test you iterators  
+* challenge: implemnt a make PreOrderIter [in class Componnet]  
+* do not use external resources: just the rules in the GoF book.   
+
+# Iterator
+
+## Intent 
+Provide a way to access the elemnts of an aggregate object sequentially without
+exposingthe underlying representation.
+
+## Initial commentThe lcien tshould have no idea of how the aggregate is (internall)
+storing its values
+
+## Primaty motivation
+* Maintainng envapsulation boundares & promoting information hiding
+* avoid encumbering a class with accessor methods
+(specifically those that would be used by _clients_ to access an instances elements)
+* abstracts "iteration'
+   * structure independend
+   * polymorphic iteration
+
+-- Iterator structure --
+
+# GoF iterator semanticsThe GoF iterator supports (at least) four operations:
+
+* GoF  isDone():boolean  //true, iff there is not element yet to revealed
+* Dave hasNext():boolean //true, iff there is an element yet to revealed
+* GoF currentItem():Type //get the current item
+* GoF next():void // advances the traversa's state
+* GoF first():void //reset the iteratertor to the beginning of the traversal
+* dave reset():void //reset the iteratertor to the beginning of the traversal
+
+# Canonincal usage
+
+```java
+Iterator<> iter = 
+for (iter.reset(); iter.hasNext(); iter.next()){
+    // iter.currentItem <= do something
+}
+```
+
+# Java iterator semantics 
+The java interface Iterator<T> declarees three operations, at least two of which must be
+"implemnted."
+
+* hasNext():boolean //true, iff there is an element yet to be revealed
+* next():T          //returns the current element and advaces the iterations's state
+* remove():void //this is bad
+
+```
+public void remove() throws UnspportedException {
+    throw new UnsupportedException("bad dog!")
+}
+```
+
+# Canonincal usage cont.
+Iterator<Type> iter = ...;
+while (iter.hasNext() ){
+    //do something with iter.next();
+}
+
+Note: next() should only be called after verifying hasNext is true.
+
+## What one should never do to an aggregate while it is being traversed:
+add or remvoe elements
+
+Why? 
+It's unsafe.
+
+It's particullary unsife in the context of cuncurrent programs, but is also in aissue in
+non-concurrent programs.
+
+Assume a list with n items
+* create an iterator and visit the first n/2 items something else adds/removes an element
+  from the listyou call ( assuming javasemantics) iter.next(); what havppens
+
+
+
+whY? because we might otherwise:
+  
+* visit an element again
+* skin an element
+* get an  "OutOfBoundsException" (or similar), becase the elemnt no longer exists.
+
+
+# types of iterators
+
+# external iterators 
+* the client requests an iterator from the aggregate it wants to travers
+* the client is reponsible for the code that interacts with each element
+
+#internatl iteratrs
+* The client passes an "operations" to the aggregate
+* the aggregate is responsble for
+  traversing itself and applying that operation to each of tis elemnts
+
+# Cursor
+* explain later
+
+# a comparison
+                           internal                    external                cursor
+Traveral control           in aggregate                in iterator             in aggregate
+simultaneous traversals?   no                          possible                possible
+easy of supporting         very hard                   doable                  ugly
+multiple traversal algs
+fine--grained ctrl         no                           yes                    yes 
+
+# Administrivia
+* Read and understand so far as possible how the code presented on 65-70 works
+
+#Iterators (257)
+## Aside: Java's for-each loop syntax
+Classes which implment the interface Iterable<T> have an iterator() that returns an 
+Iterator<T> over instansces of that class's elemnts. Iterable classes and _arrays_ ( chich
+are msyteriously not Iterable) can be used with the "for-ecah" loop
+````
+for ( ElmentType e :SomeIterableAggregate ) {
+    //do stuff wtih e
+}
+
+```
+
+In some langs (smalltalk) we'd need to violate encapsulation boundaries to implement this;
+in other languages it can be a lesser violation [e.g., C++, the iterator can be declared a
+friend of the List]. In Java we might Consider the Iterator an extension of the host
+object if it is implmented as an inner-class [because they implicitly have access to their
+defining object's private stuff [they are defined in the object's scope]]
+
+``` 
+class Foo {
+    private List<Bar> data;
+
+    public Iterator<Bar> makeIterator(){
+        return data.makeIterator();
+    }
+}
+```
+
+:Note that the request to make an iterator is forawrded to an aggregate structure.
+
+```
+class List<T> {
+    private Node<T> head;
+    private Node<T> tail;
+
+    public Iterator<T> makeIterator() {
+        return new Iterator<T>()
+    }
+}
+```
+
+

@@ -1,0 +1,126 @@
+---
+layout: post
+title:  "Visitor"
+---
+
+# HW 
+Online
+
+
+# Intent
+
+Represent an operation to be performed on the elements of an object structure. Visitor
+lets you define a new operation without chaning the classes of elements on which it
+operates.
+
+# Initial Comments
+* The object strucuter is (usually) composed of heterogenous types  
+    * each of the different types will execute a different method when the `Visitor`'s
+      operation is invoked.  
+* The patterns is not limited to just performing an operation on the elements of an object
+  structure. It can also be used with  
+    * Independent obejcts [ie., one not grouped into a structure]  
+    * multiple structures  
+    * can be used with strucutre that are not typically related
+
+
+# A bit of programming history
+Assume we have a set of _Shapes_ that we want to display...
+
+# Procedural solution
+
+    for each Shape s
+        switch ( s )
+            case SQUARE: drawSquare();
+            case CIRCLE: drawCircle();
+            ...
+
+
+Conditional login is used to determine what kind of thing to draw, and having identified
+it, to draw.
+
+# Object-oriented solution
+    for each Shape s
+        s.draw();
+
+Each kind of _Shape_ must know how to draw itself
+* conditional logic has been eliminated
+* knowledge about how a particular shape is draw is encapsulated in that Shape
+
+# FP 
+    (map draw shapes)
+
+# Visitor-oriented solution
+Visitor V = new ShapePrintingVisistor();
+for each Shape s
+    s.accept(v);
+
+the Visitor is the thing that knows _how_ to draw shapes. _Shapes_ do *not* know how to
+draw themselves.  
+
+* conditional logic is eliminated
+* drawing logic is localised in the `Visitor`
+  
+# A "first glance" critique  
+visitor centralizes the location where variations on an operation are stored.  
+
+* Appears to be a major encapsulation violation
+* rather than each Shape having its own draw(), all the variations are defined in a single
+  `Visitor` class.
+  
+# Double dispatch  
+You've been weand on programming in OO environments that support _single dispatch_   
+
+* the method that gets executed when an operation is invoked on an object depends on that
+  (taget) object's class (_dynamic binding_)  
+
+with double dispatch the method that (ultimately) get executed depends on the `class` of
+two objects: inour example here:   
+
+* the object upon which the oepration was invoked, and 
+* the object that was supplied as an argument
+
+  
+Note: the act of drawing will almost certainly require the `Visitor`  ( specifically the
+`ShapeDrawingVisitor`) to query the Shape for geometric data - e.g. radius. but that has
+been elided from the SD above.
+  
+In this case, _double dispatch_ is implemented by the (concrete) Shape's accept() method, 
+which tells the `ShapeVisitor` which of its visitX() it should execute.
+
+# Applicability
+* the set of classes which are candidtaes for being visisted must be relatively static  
+    * reason : every time a new class is added to the set of visitable classes, the
+      Visitor interface must be updated, and hence all the classes which implement it must
+      be updated to support the operations that visit that class
+* often, it's not until late in a product's life-cycle that one recognizes, "Hey we should
+  have used the visitor pattern!"
+* e.g., creating a complete Shape hieracrchy only to realize that one needs to be able to
+  draw them - thus requiring us to revise each of the calsses so that it'll support a
+  draw()
+
+* had the Visitor pattern been used from the start, because alll we'd need to do is
+  implemnt an appororiate Visitor
+
+* When is Visitor violating encapsulation? when is it supporting encapsulation?  
+* a class's interface should support only those operations that are essential to that
+  class's core abstraction.
+* Tangentially related operations are not part of the core abstraction.
+* thus we can argue that lumping all the variations (across a hierarchy) of a non-core
+  operation into a Visitor is actually supporting good encapsulation.
+
+
+# Who controls the traversal?
+
+* Something external to the visitor  
+    * that thing would be responsible for calling `accept()` on sucessive elemtns of the
+      strucutre bein visited  
+    * pro: can support multiple (simultaneous) traversals  
+    * pro: can have finer grained control over the traversals  
+* Visitor itself
+    * Traversal code isn't easily reusable when it's encapsulated in the visitor
+    * but... what if it uses an Iterator? then something that is reusable but also have
+      the control in the visitor
+
+
+

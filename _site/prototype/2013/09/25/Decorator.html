@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Decorator</title>
+        <meta name="viewport" content="width=device-width">
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" href="/css/syntax.css">
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/main.css">
+
+    </head>
+    <body>
+
+        <div class="container">
+          <div class="site">
+            <div class="header">
+              <h1 class="title"><a href="/">Design Patterns</a></h1>
+              <a class="extra" href="/">home</a>
+            </div>
+
+                <h2>Decorator</h2>
+<p class="meta">25 Sep 2013</p>
+
+<div class="post">
+<h1 id="toc_0">Decorator (175)</h1>
+
+<h2 id="toc_1">Participants (alternative to what appears in the GoF)</h2>
+
+<p><em>CoreCompononet</em><br>
+<em>Decorator</em><br>
+<em>ConcreteDecorator</em></p>
+
+<p>Overrides <em>specific</em> <strong>Component</strong> operation(s)</p>
+
+<h1 id="toc_2">Observations</h1>
+
+<h2 id="toc_3">Decorators can be chained</h2>
+
+<p>Client -&gt; CDecoratorA =&gt; CDecoratorB =&gt; CComponent</p>
+
+<p>Examples of this, in Java, include
+* Using a JScrollPane to decorate another JComponent
+* Borders
+* IOStreams</p>
+
+<h1 id="toc_4">Where the pattern has been applied</h1>
+
+<p>Most uses of the <strong>Decorator</strong> pattern have been in &quot;system software&quot; as opposed to
+being used to model domains. [ in a moment, we&#39;ll se an example of using them to 
+model a domain. ]</p>
+
+<h1 id="toc_5">Boilerplate reduce</h1>
+
+<p>Sometimes we just want to say, &quot;This is how X differs from Y.&quot;</p>
+
+<p>As with the boilerplate example covered in our <strong>Prototype</strong> discussion, our insurance 
+company will have three standard policies (Basic, Deluxe, &amp; Premium). Clients can </p>
+
+<p>t customized version, varying the coverage, add/removing events, modyfing</p>
+
+<h2 id="toc_6">Process for customizing a policy</h2>
+
+<p>Step 1 
+instantiate a concrete SLIP - e.g., a BasicSLIP
+* Set the attribute values (policyNumber, &amp;c. and info about the <strong>InsuredPart</strong>)
+* as part of the contruction process, the Map will be populated with default values</p>
+
+<p>Step 2: Wrap in a Decorator 
+customize the SLIP for the desired coverate by wrapping it with a <strong>SLIPDecorator</strong>
+on which the desired policy endorsements have been set</p>
+
+<p>On the <code>Decorator</code> 
+    SetCoverate( tattoEvent, new Policy(100%, $100000) );
+    setCoverate( infectedPiercingEvent, newPolicy( 0%, $0) );</p>
+
+<p>Note: the first shows how to add/change an endorsement, the second shows how to remove one.</p>
+
+<p>Step 3: give teh decorated SLIP to the client</p>
+
+<p>The client will know only the <em>decorated</em> SLIP, which implements <code>getCoverate()</code> as 
+    Police getCoverate( Event e ) {
+        Policy p = map.get (e);
+        if ( p = null ) 
+            p = slip.getCoverage(e);</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">    return p;
+}
+</code></pre></div>
+<h1 id="toc_7">Comments</h1>
+
+<p>A SLIPDecorator stores the <em>differences</em> between the original and modified components
+* pro: no copying needed - reduces storage cost ( the  <code>CSIP</code> might even be sharable!)<br>
+* pro: easy to identify what has changed relative to the boilerplate object, because
+  all the differences a(and only the diffs) are encapsulated in the <strong>Decorator</strong>(s)
+* pro: decorators can be chained</p>
+
+</div>
+
+
+            <div class="footer">
+              <div class="contact">
+                <p>
+                  Your Name<br />
+                  What You Are<br />
+                  your@email.com
+                </p>
+              </div>
+              <div class="contact">
+                <p>
+                  <a href="http://github.com/yourusername/">github.com/yourusername</a><br />
+                  <a href="http://twitter.com/yourusername/">twitter.com/yourusername</a><br />
+                </p>
+              </div>
+            </div>
+          </div>
+        </div> <!-- /container -->
+
+    </body>
+</html>
