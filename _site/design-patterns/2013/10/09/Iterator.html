@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Iterator</title>
+        <meta name="viewport" content="width=device-width">
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" href="/css/syntax.css">
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/main.css">
+
+    </head>
+    <body>
+
+        <div class="container">
+          <div class="site">
+            <div class="header">
+              <h1 class="title"><a href="/">Design Patterns</a></h1>
+              <a class="extra" href="/">home</a>
+            </div>
+
+                <h2>Iterator</h2>
+<p class="meta">09 Oct 2013</p>
+
+<div class="post">
+<h1 id="toc_0">Administrivia</h1>
+
+<ul>
+<li>HW 07:
+revisist your <code>Composite</code> HW</li>
+<li>make it maintain the invarian using TM and use...</li>
+</ul>
+<div class="highlight"><pre><code class="java language-java" data-lang="java"><span class="kd">public</span> <span class="n">String</span> <span class="nf">toString</span><span class="o">(){</span>
+    <span class="k">return</span> <span class="o">(</span><span class="n">parent</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">?</span>
+        <span class="n">instanceID</span> <span class="o">+</span> <span class="s">&quot;ist the root&quot;</span> <span class="o">:</span>
+        <span class="n">instanceID</span> <span class="o">+</span> <span class="s">&quot; is the child of &quot;</span> <span class="o">+</span> <span class="n">parent</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div>
+<ul>
+<li>define an interface Iter<T> that has GoF (or Dave) semantics.<br></li>
+<li>for each subclass of component implmenet an appropiate Iter<T> over it&#39;s children.<br></li>
+<li>Test you iterators<br></li>
+<li>challenge: implemnt a make PreOrderIter [in class Componnet]<br></li>
+<li>do not use external resources: just the rules in the GoF book.<br></li>
+</ul>
+
+<h1 id="toc_1">Iterator</h1>
+
+<h2 id="toc_2">Intent</h2>
+
+<p>Provide a way to access the elemnts of an aggregate object sequentially without
+exposingthe underlying representation.</p>
+
+<h2 id="toc_3">Initial commentThe lcien tshould have no idea of how the aggregate is (internall)</h2>
+
+<p>storing its values</p>
+
+<h2 id="toc_4">Primaty motivation</h2>
+
+<ul>
+<li>Maintainng envapsulation boundares &amp; promoting information hiding</li>
+<li>avoid encumbering a class with accessor methods
+(specifically those that would be used by <em>clients</em> to access an instances elements)</li>
+<li>abstracts &quot;iteration&#39;
+
+<ul>
+<li>structure independend</li>
+<li>polymorphic iteration</li>
+</ul></li>
+</ul>
+
+<p>-- Iterator structure --</p>
+
+<h1 id="toc_5">GoF iterator semanticsThe GoF iterator supports (at least) four operations:</h1>
+
+<ul>
+<li>GoF  isDone():boolean  //true, iff there is not element yet to revealed</li>
+<li>Dave hasNext():boolean //true, iff there is an element yet to revealed</li>
+<li>GoF currentItem():Type //get the current item</li>
+<li>GoF next():void // advances the traversa&#39;s state</li>
+<li>GoF first():void //reset the iteratertor to the beginning of the traversal</li>
+<li>dave reset():void //reset the iteratertor to the beginning of the traversal</li>
+</ul>
+
+<h1 id="toc_6">Canonincal usage</h1>
+<div class="highlight"><pre><code class="java language-java" data-lang="java"><span class="n">Iterator</span><span class="o">&lt;&gt;</span> <span class="n">iter</span> <span class="o">=</span> 
+<span class="k">for</span> <span class="o">(</span><span class="n">iter</span><span class="o">.</span><span class="na">reset</span><span class="o">();</span> <span class="n">iter</span><span class="o">.</span><span class="na">hasNext</span><span class="o">();</span> <span class="n">iter</span><span class="o">.</span><span class="na">next</span><span class="o">()){</span>
+    <span class="c1">// iter.currentItem &lt;= do something</span>
+<span class="o">}</span>
+</code></pre></div>
+<h1 id="toc_7">Java iterator semantics</h1>
+
+<p>The java interface Iterator<T> declarees three operations, at least two of which must be
+&quot;implemnted.&quot;</p>
+
+<ul>
+<li>hasNext():boolean //true, iff there is an element yet to be revealed</li>
+<li>next():T          //returns the current element and advaces the iterations&#39;s state</li>
+<li>remove():void //this is bad</li>
+</ul>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">public void remove() throws UnspportedException {
+    throw new UnsupportedException(&quot;bad dog!&quot;)
+}
+</code></pre></div>
+<h1 id="toc_8">Canonincal usage cont.</h1>
+
+<p>Iterator<Type> iter = ...;
+while (iter.hasNext() ){
+    //do something with iter.next();
+}</p>
+
+<p>Note: next() should only be called after verifying hasNext is true.</p>
+
+<h2 id="toc_9">What one should never do to an aggregate while it is being traversed:</h2>
+
+<p>add or remvoe elements</p>
+
+<p>Why? 
+It&#39;s unsafe.</p>
+
+<p>It&#39;s particullary unsife in the context of cuncurrent programs, but is also in aissue in
+non-concurrent programs.</p>
+
+<p>Assume a list with n items
+* create an iterator and visit the first n/2 items something else adds/removes an element
+  from the listyou call ( assuming javasemantics) iter.next(); what havppens</p>
+
+<p>whY? because we might otherwise:</p>
+
+<ul>
+<li>visit an element again</li>
+<li>skin an element</li>
+<li>get an  &quot;OutOfBoundsException&quot; (or similar), becase the elemnt no longer exists.</li>
+</ul>
+
+<h1 id="toc_10">types of iterators</h1>
+
+<h1 id="toc_11">external iterators</h1>
+
+<ul>
+<li>the client requests an iterator from the aggregate it wants to travers</li>
+<li>the client is reponsible for the code that interacts with each element</li>
+</ul>
+
+<h1 id="toc_12">internatl iteratrs</h1>
+
+<ul>
+<li>The client passes an &quot;operations&quot; to the aggregate</li>
+<li>the aggregate is responsble for
+traversing itself and applying that operation to each of tis elemnts</li>
+</ul>
+
+<h1 id="toc_13">Cursor</h1>
+
+<ul>
+<li>explain later</li>
+</ul>
+
+<h1 id="toc_14">a comparison</h1>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">                       internal                    external                cursor
+</code></pre></div>
+<p>Traveral control           in aggregate                in iterator             in aggregate
+simultaneous traversals?   no                          possible                possible
+easy of supporting         very hard                   doable                  ugly
+multiple traversal algs
+fine--grained ctrl         no                           yes                    yes </p>
+
+<h1 id="toc_15">Administrivia</h1>
+
+<ul>
+<li>Read and understand so far as possible how the code presented on 65-70 works</li>
+</ul>
+
+<h1 id="toc_16">Iterators (257)</h1>
+
+<h2 id="toc_17">Aside: Java&#39;s for-each loop syntax</h2>
+
+<p>Classes which implment the interface Iterable<T> have an iterator() that returns an 
+Iterator<T> over instansces of that class&#39;s elemnts. Iterable classes and <em>arrays</em> ( chich
+are msyteriously not Iterable) can be used with the &quot;for-ecah&quot; loop
+````
+for ( ElmentType e :SomeIterableAggregate ) {
+    //do stuff wtih e
+}</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">In some langs (smalltalk) we&#39;d need to violate encapsulation boundaries to implement this;
+in other languages it can be a lesser violation [e.g., C++, the iterator can be declared a
+friend of the List]. In Java we might Consider the Iterator an extension of the host
+object if it is implmented as an inner-class [because they implicitly have access to their
+defining object&#39;s private stuff [they are defined in the object&#39;s scope]]
+</code></pre></div>
+<p>class Foo {
+    private List<Bar> data;</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">public Iterator&lt;Bar&gt; makeIterator(){
+    return data.makeIterator();
+}
+</code></pre></div>
+<p>}
+```</p>
+
+<p>:Note that the request to make an iterator is forawrded to an aggregate structure.</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">class List&lt;T&gt; {
+    private Node&lt;T&gt; head;
+    private Node&lt;T&gt; tail;
+
+    public Iterator&lt;T&gt; makeIterator() {
+        return new Iterator&lt;T&gt;()
+    }
+}
+</code></pre></div>
+</div>
+
+
+            <div class="footer">
+              <div class="contact">
+                <p>
+                  Your Name<br />
+                  What You Are<br />
+                  your@email.com
+                </p>
+              </div>
+              <div class="contact">
+                <p>
+                  <a href="http://github.com/yourusername/">github.com/yourusername</a><br />
+                  <a href="http://twitter.com/yourusername/">twitter.com/yourusername</a><br />
+                </p>
+              </div>
+            </div>
+          </div>
+        </div> <!-- /container -->
+
+    </body>
+</html>

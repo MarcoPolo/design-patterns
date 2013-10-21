@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Composite</title>
+        <meta name="viewport" content="width=device-width">
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" href="/css/syntax.css">
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/main.css">
+
+    </head>
+    <body>
+
+        <div class="container">
+          <div class="site">
+            <div class="header">
+              <h1 class="title"><a href="/">Design Patterns</a></h1>
+              <a class="extra" href="/">home</a>
+            </div>
+
+                <h2>Composite</h2>
+<p class="meta">07 Oct 2013</p>
+
+<div class="post">
+<h1 id="toc_0">Composite (163)</h1>
+
+<h1 id="toc_1">Variant: restricted composite In it&#39;s pure form, the <em>Composite</em> pattern does <em>not</em></h1>
+
+<p>restrict the nesting level nor the types of COmponents that caan be chilldren of a
+particular Composite; however, it may be useful to allow such restrictions</p>
+
+<h1 id="toc_2">Example</h1>
+
+<ul>
+<li>Uml -</li>
+</ul>
+
+<p>In this system, we are restricted:
+* In terms of depth
+* the type of children that a <code>ComputerComponent</code> can have.</p>
+
+<p>once assembled, the way a client will act with a <code>ComputerComponent</code> is uniform. however
+by necessity, the construction process will not be transparent.</p>
+
+<h1 id="toc_3">Implementing operations</h1>
+
+<p>A <code>Composite</code> can:
+* forward a request to <em>all</em> its childreln and aggregate (or filter) the results
+* forward a request to <em>selected</em> children and ...
+* pass data to the children and ...
+* override:  ignore the children and handle the request alone</p>
+
+<h1 id="toc_4">Safety v. Transparency</h1>
+
+<p>This will be in large part dependent upon the implementation language.</p>
+
+<p>Transperancy: requires everything [<code>Composites</code> &amp; <code>Leafs</code>] support the same interface.</p>
+
+<p>Safety: Classes shouldn&#39;t support operations hwere, to them, are mealningless</p>
+
+<p>Consider the operations:<br>
+<code>java 
+add( Component)
+getChildren():Collection
+makeIterator():Iterator
+remove ( Component )
+</code></p>
+
+<p>All of these operations are reasonable for <code>Composites</code> to support</p>
+
+<p>which makes sense for <code>Leafs</code>?</p>
+
+<h1 id="toc_5">General OO Principle</h1>
+
+<p>Pushing functionality <em>up</em> [twoards the base class] in a hiearachy is generally regarded
+as a <strong><em>Very Bad Thing</em></strong></p>
+
+<p>To be clear, what we are talking about here is are functionoalities that are not common to
+all subtypes</p>
+
+<p>The GoF book&#39;s presentation has a bias towards languages that support static type
+checking. therefore favors transparency over safty becase otherwise it would be extremly
+difficult (if not impossible) to implement some of the patterns (e.g., <code>Composite</code>) using
+a statically typed langauge. </p>
+
+<p>When one is using a dynaming language you can favor <em>safety</em>.</p>
+
+<p>Assuming a statically typed langauge:    </p>
+
+<ul>
+<li>how should a <code>Leaf</code> implement child management operations?<br>
+
+<ul>
+<li>Flag an error<br>
+
+<ul>
+<li>Return an error code<br></li>
+<li>Throw exception<br></li>
+</ul></li>
+<li>Ignore it</li>
+</ul></li>
+<li>Where should <code>Leaf</code>  management operations be implemented?
+
+<ul>
+<li>in each <code>Cleaf</code> &lt;- worst choice</li>
+<li>in <code>Component</code>: implement default (Leaf) behavior, which would then be overridden by
+components</li>
+<li>In an <em>abstract</em> <code>Leaf</code> Class</li>
+</ul></li>
+</ul>
+
+<h1 id="toc_6">Whien is transparency truly imporant?</h1>
+
+<ul>
+<li><p>The <em>creator</em> of a <code>Composite</code> will very likely have knowledge about what kinds of
+things it will be working with. If I am goin to add something to a <code>Componenet</code> chances
+are good that I created that component, chances are good that I created it (that
+<code>Component</code>), and thus know its type [hence whether or not it is a <code>Composite</code>  </p></li>
+<li><p>something manipulating a <code>Composite</code>&#39;s structure ( i.e., at some future time, things
+will be added or removed) Will likely, but not certainly, know what kind of thing it is
+dealing with.</p></li>
+<li><p>Therefore we can conclude that transperancy is most important for things that will
+interact with the <code>Component</code></p></li>
+</ul>
+
+<h1 id="toc_7">Implementation</h1>
+
+<ul>
+<li><p>We&#39;ve already diescussed how to mainatin the invarieant, &quot;if you think I am your parent,
+I think you are my child.&quot;</p></li>
+<li><p>whem implmenting sublcasses of <code>Leaf</code> or <code>Composite</code>, we cshould avoid extending their
+interface because it can&#39;t be used polymorphically (favor transparency). </p></li>
+<li><p>Only the <code>Composite</code> [ that is the class  that defines and maintains the strucute which
+ihodls the children ] should forward messages to the children; while it may be tempting
+to make a <code>CComposte</code> talk directly to its children, it will lead to less reusable and
+maintainble code.</p></li>
+<li><p>use a TM instead, similar to maintaining the invariant above</p></li>
+</ul>
+
+</div>
+
+
+            <div class="footer">
+              <div class="contact">
+                <p>
+                  Your Name<br />
+                  What You Are<br />
+                  your@email.com
+                </p>
+              </div>
+              <div class="contact">
+                <p>
+                  <a href="http://github.com/yourusername/">github.com/yourusername</a><br />
+                  <a href="http://twitter.com/yourusername/">twitter.com/yourusername</a><br />
+                </p>
+              </div>
+            </div>
+          </div>
+        </div> <!-- /container -->
+
+    </body>
+</html>

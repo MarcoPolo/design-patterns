@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Lecture 9</title>
+        <meta name="viewport" content="width=device-width">
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" href="/css/syntax.css">
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/main.css">
+
+    </head>
+    <body>
+
+        <div class="container">
+          <div class="site">
+            <div class="header">
+              <h1 class="title"><a href="/">Design Patterns</a></h1>
+              <a class="extra" href="/">home</a>
+            </div>
+
+                <h2>Lecture 9</h2>
+<p class="meta">11 Sep 2013</p>
+
+<div class="post">
+<h1 id="toc_0">Administrivia</h1>
+
+<ul>
+<li>Nothing new</li>
+</ul>
+
+<h1 id="toc_1">Template Method (325)</h1>
+
+<h2 id="toc_2">Implementation (cont.)</h2>
+
+<h3 id="toc_3">Modifiers * methods</h3>
+
+<p>Q: Which access modifiers (in languages which support them) should be used with 
+the TM an dthe operations it calls?</p>
+
+<table><thead>
+<tr>
+<th>modifier</th>
+<th align="right">method</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>public/protect</td>
+<td align="right">concrete (when generaly useful, not TM specific)</td>
+</tr>
+<tr>
+<td>protected</td>
+<td align="right">hook</td>
+</tr>
+<tr>
+<td>abstract protected</td>
+<td align="right">primitive</td>
+</tr>
+<tr>
+<td>private final</td>
+<td align="right">invariant steps (concrete methods that <em>are</em> TM specifc)</td>
+</tr>
+<tr>
+<td>☨</td>
+<td align="right">factory methods</td>
+</tr>
+<tr>
+<td>☨☨</td>
+<td align="right">TM</td>
+</tr>
+</tbody></table>
+
+<ul>
+<li><p>☨ - depends on whether
+a) there is a default implementation [whether abstract or not]
+b) who else should be able to use it [whether public or protected]</p></li>
+<li><p>☨☨ - depends upon who is supposed to cal it</p></li>
+</ul>
+
+<h3 id="toc_4">Some  things to ponder on your own</h3>
+
+<p>Q1: Is an <em>inverted control strucutre</em> an integral part of TM? Justify your answer.
+    Could you use TM without <em>inverted control strucutre</em></p>
+
+<p>Q2: TM relies on <em>inheritance</em>. Would it be possible to get the same functionality using <em>object composition</em>?
+If so, what would be some of the trade-offs? If not, why not? </p>
+
+<p>Q3: Isn&#39;t TM just plain ol&#39; <em>procedural decomposition</em> guised up for OOP?</p>
+
+<h1 id="toc_5">HW 3 (Magnitude) redux</h1>
+
+<p>Q: Could <code>Magnitude</code> have a data member + <code>getMagnitude()</code> ?
+A: Not only can a <code>getMagnitude()</code> <em>not</em> be defined in the base class <code>Magnitude</code>,
+ because there is no meaningful common type that all instances of magnitude can be reduced to</p>
+
+<p>Q: What was meant by &quot; <code>Magnitude</code> is not meant to define a type? &quot;
+A: instances of subclasses of <code>Magnitude</code> are <em>not</em> substitutable for <code>Magnitude</code></p>
+
+<h1 id="toc_6">Strategy (315)</h1>
+
+<h2 id="toc_7">Intent</h2>
+
+<p>Define a family of algorithms, encapsulate each one, and make them interchangable.
+ Strategy lets the algorithm var independently from the clients that use it.</p>
+
+<h2 id="toc_8">Example Applications</h2>
+
+<ul>
+<li>video compression</li>
+<li>encryption</li>
+<li>bitmap represntation</li>
+<li>data vidualization (tabular, char: bar, line, pie, ...)</li>
+<li>GUI component layout managers</li>
+<li>auto insurance quote<br>
+
+<ul>
+<li>states have different regulations &amp; asess penalty points in different ways</li>
+</ul></li>
+</ul>
+
+<h2 id="toc_9">it&#39;s an alternative to <em>brute force</em></h2>
+
+<div class="highlight"><pre><code class="java">        <span class="k">switch</span> <span class="o">(</span><span class="n">whichAlgorithmToUse</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">case</span> <span class="nl">alg1:</span> <span class="n">alg1</span><span class="o">(</span><span class="n">data</span><span class="o">);</span> <span class="k">break</span><span class="o">;</span>
+            <span class="k">case</span> <span class="nl">alg2:</span> <span class="n">alg2</span><span class="o">(</span><span class="n">data</span><span class="o">);</span> <span class="k">break</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="o">..</span>
+
+    
+</code></pre></div>
+
+<h2 id="toc_10">Facilitates code reuse</h2>
+
+<p>when algorithms are embedded in the client class&#39;s code, it makes it hard/impossible
+to reuse the alogorithm&#39;s implemntation in a different context</p>
+
+<p>Q1: Why not just lump all the algorithms together in a <em>utility class</em> that could be 
+shared by mutliple applications?</p>
+
+<p>A1: (assuming we want to choose the algorithm at runtime) we&#39;d need to make a choice,
+thus requiring conditional logic</p>
+
+<p>A2: All the alogorithms need to be present in memory, even if the application only uses one of them.</p>
+
+<p>A3: Clients would need to be modified when new algorithms were added to 
+the utility class ( in order to use the new algorithms )</p>
+
+<p>A4: adding new algorithms would entail modifying the utility class: 
+what happens when we don&#39;t have access to the source code?</p>
+
+<h1 id="toc_11">Lecture 10</h1>
+
+<h1 id="toc_12">Administrivia</h1>
+
+<ul>
+<li>Read State(305)</li>
+<li>Read Strategy(305)</li>
+</ul>
+
+<h1 id="toc_13">Strategy (315)</h1>
+
+<h2 id="toc_14">Structure</h2>
+
+<p><uml here></p>
+
+<h2 id="toc_15">Usage</h2>
+
+<ul>
+<li><p>The <strong>Context</strong> (the Strategy&#39;s client) works with a <strong>CStrategy</strong></p>
+
+<ul>
+<li><em>may</em> use the same Strategy for the program&#39;s entire execution</li>
+<li><em>may</em> use different Strategies as the program executes</li>
+</ul></li>
+<li><p>the <strong>CStrategy</strong> may be set</p>
+
+<ul>
+<li>a <strong>mutator</strong> on the  <em>Context</em> which allows one to choose the <strong>CStrategy</strong></li>
+<li>passed as a parameter to the <em>contextInterface()</em></li>
+<li>specified as a type parameter (when <strong>Context</strong> is a generic/template/parametric class)</li>
+</ul></li>
+<li><p>anytime the client needs the results of the algorithm, it forwards the requet to <strong>CStrategy</strong>.</p></li>
+</ul>
+
+<h2 id="toc_16">Implementation</h2>
+
+<p>must choose between a push model or a pull model</p>
+
+<h2 id="toc_17">Push</h2>
+
+<p>the client is responsible for passing data along with the request<br>
+* con: must pass <em>all</em> the information that <em>any</em> member of the algorithm family might need,
+ this is because we have to provide a single interface <code>algorithmInterface()</code> 
+ that is usable with any <strong>CStrategy</strong> (some may require information that other do not).
+ Further, since we shouldn&#39;t make assumptions about which <strong>CStrategy</strong> will handle
+ the reqest, we can&#39;t safely pass <em>null</em> values for things we think the algorithm will ignore</p>
+
+<h2 id="toc_18">Pull</h2>
+
+<p>the <strong>CStrategy object</strong> requests the data it needsfrom the client    </p>
+
+<ul>
+<li>how does the Srategy know who the client is ( so it can make the request)?<br></li>
+<li>pass a reference to the client when the <strong>CStrategy</strong>&#39;s constructor is invoked<br>
+
+<ul>
+<li>Con: Strategy object can&#39;t be shared</li>
+<li>Pro: makes for clean code</li>
+</ul></li>
+<li>con: tigher coupling between the client and <strong>Strategy</strong></li>
+<li>the client <em>must</em> support a known interface in order for a <strong>Strategy</strong> to query 
+the client for the needed data</li>
+</ul>
+
+<h1 id="toc_19">HW02 [Java&#39;s sort() takes a comparator] redux</h1>
+
+<h1 id="toc_20">TM?</h1>
+
+<ul>
+<li>The <strong>Comparator</strong> is being used to customize in a (sort) algorithm.</li>
+<li>However Template Method uses <em>subclassing</em> to redefine a template behavior</li>
+</ul>
+
+<h1 id="toc_21">Strategy?</h1>
+
+<ul>
+<li>passing an object that implements an algorithm ( the <strong>Comparator</strong>) that is suitable
+for comparing the actual typeof data in the collection.<br></li>
+<li>however, Strategy relies on object composition</li>
+</ul>
+
+<h1 id="toc_22">Functor</h1>
+
+<p>A <em>functor</em> in OOP, is an object that represnts a function; useful even with function pointers
+because they contiain state</p>
+
+<p>There are a lot of people who would argue that the use of <strong>Comparator</strong> by <code>sort()</code> is an example of the <strong>Strategy</strong>
+patter. However, I would argue that is really an
+example of th euse of a functor, because it is being used to parameterize an <em>operation</em> rather than an <em>object</em></p>
+
+<p>in the spirit of full disclosure that are some that believe thta functor...
+&quot;is a perfect realization the the Strategy pattern.&quot;</p>
+
+<p>GoF talks about Functors in <strong>Command</strong> pattern, but not in <strong>Strategy</strong></p>
+
+<h1 id="toc_23">State (305)</h1>
+
+<h1 id="toc_24">Lecture 11</h1>
+
+<h1 id="toc_25">Administrivia</h1>
+
+<ul>
+<li>Read State(305)</li>
+<li>Read Strategy(305)</li>
+<li>Read Abstract Factory(87)</li>
+</ul>
+
+<h1 id="toc_26">State (305)</h1>
+
+<h2 id="toc_27">Intent</h2>
+
+<p>Allow an object to alter it&#39;s behavior when it&#39;s internal state changes.
+The object will appear to change it&#39;s class.</p>
+
+<h2 id="toc_28">Applicability</h2>
+
+<ul>
+<li>use when an object&#39;s behavior is state-dependent - where the object&#39;s state is determined at runtime and may chnage</li>
+<li>use wen state-dependent behaviors may be implemented by multiple operations - i.e.,
+when an object changes state, the behavior of multiple ops may be afffected</li>
+</ul>
+
+<div class="highlight"><pre><code class="java"> <span class="kd">class</span> <span class="nc">Order</span> <span class="o">{</span>
+     <span class="n">OrderProcessor</span> <span class="n">processor</span> <span class="o">=</span> <span class="o">...;</span>
+     <span class="n">StateToken</span> <span class="n">state</span> <span class="o">=</span> <span class="n">CREATED</span><span class="o">;</span>
+
+     <span class="n">submit</span><span class="o">()</span> <span class="o">{</span>
+         <span class="k">switch</span> <span class="o">(</span> <span class="n">state</span> <span class="o">)</span> <span class="o">{</span>
+             <span class="nl">CREATED:</span>
+                <span class="n">error</span><span class="o">(</span> <span class="s">&quot;Mustbe validated first.&quot;</span><span class="o">);</span>
+            <span class="nl">VALIDATED:</span>
+                <span class="n">processor</span><span class="o">.</span><span class="na">submit</span><span class="o">(</span> <span class="k">this</span> <span class="o">);</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="n">SUBMITTED</span><span class="o">;</span>
+            <span class="nl">SUBMITTED:</span>
+                <span class="n">error</span><span class="o">(</span> <span class="s">&quot;Can&#39;t submit same order twice.&quot;</span> <span class="o">)</span>
+            <span class="nl">CANCELLED:</span>
+                <span class="n">error</span><span class="o">(</span> <span class="s">&quot;This order has been cancelled.&quot;</span> <span class="o">)</span>
+         <span class="o">}</span>
+     <span class="o">}</span>
+     
+     <span class="n">validate</span><span class="o">()</span> <span class="o">{</span>
+         <span class="c1">//also has state dependent behavior</span>
+         <span class="k">switch</span> <span class="o">(</span> <span class="n">state</span> <span class="o">)</span>
+             <span class="c1">//...</span>
+     <span class="o">}</span>
+ <span class="o">}</span>
+</code></pre></div>
+
+<hr>
+
+<p>Note: there are multiple methods that have conditional logic used to determine <em>what</em> to do depending on the Order&#39;s current state</p>
+
+<p>In terms of the <em>specific implementation:</em>  </p>
+
+<ul>
+<li>Must execute decoding logic every time <code>submit()</code> is called</li>
+<li>Similar control structures exist in other methods</li>
+<li><em>state transitions</em> are embedded in those methods</li>
+</ul>
+
+<p>From a code understanding &amp; maintenance perpective:  </p>
+
+<ul>
+<li>Relatively hard to grasp the relationship between states because the transitions are buried in the code</li>
+<li>adding new states will be laborious and error prone because every method
+containing the dcoding structures will need to be updated.</li>
+</ul>
+
+<h2 id="toc_29">Applicability (Cont.)</h2>
+
+<ul>
+<li>use when the context has a limited, well-defined set of possible states</li>
+<li>the context must have well-defined transitions between states<br>
+
+<ul>
+<li>it&#39;s inappropriate to use the <code>State</code> when state changes are inconsistent or subjective</li>
+</ul></li>
+</ul>
+
+<h2 id="toc_30">Example: Translated to State pattern</h2>
+
+<p>The state pattern encapsulated state-dependent behavior in <strong>separate</strong> <em>state objects</em></p>
+
+<div class="highlight"><pre><code class="java"><span class="kd">class</span> <span class="nc">Order</span> <span class="o">{</span>
+   <span class="n">OrderProcessor</span> <span class="n">processor</span> <span class="o">=</span> <span class="o">...;</span>
+   <span class="n">StateToken</span> <span class="n">state</span> <span class="o">=</span> <span class="n">CREATED</span><span class="o">;</span>
+
+   <span class="n">StateToken</span> <span class="n">state</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CreatedState</span><span class="o">();</span>
+
+   <span class="n">submit</span> <span class="o">(){</span>
+       <span class="n">state</span><span class="o">.</span><span class="na">submit</span><span class="o">();</span>
+   <span class="o">}</span>
+   
+
+<span class="o">}</span>
+</code></pre></div>
+
+<p>Note: don&#39;t get hung up on how state objects communcate with the context</p>
+
+<p>There are several ways the can be implemented<br>
+* in some langauges (e.g., java) have <em>nested classes</em>
+* pass a reference to the </p>
+
+<div class="highlight"><pre><code class="java">    <span class="kd">class</span> <span class="nc">CreatedState</span> <span class="kd">extends</span> <span class="n">State</span> <span class="o">{</span> 
+        <span class="c1">//or implements</span>
+        <span class="n">submit</span><span class="o">(){</span>
+            <span class="n">error</span><span class="o">(</span> <span class="s">&quot;Must be validated first&quot;</span> <span class="o">)</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+</code></pre></div>
+
+<ul>
+<li>nested class</li>
+<li>pass reference to the <strong>State</strong> object when invoking its methods</li>
+<li>&amp;c.</li>
+</ul>
+
+<hr>
+
+<h3 id="toc_31">observe: the control structure has been eliminated!</h3>
+
+<ul>
+<li>state transitions are <em>more</em> explicit
+
+<ul>
+<li>no longer buried in the middle of a conditional block</li>
+</ul></li>
+<li>overall, easier to understand and maintain</li>
+</ul>
+
+<h3 id="toc_32">&quot; The object will appear to change its class.&quot;</h3>
+
+<p>a <strong>class</strong> defines the properties and behaviors of its instances; because the object&#39;s 
+behavior may vary dramatically depending upon its state, that let the GoF to use
+the phrase &quot;wil appear to change it class.&quot; They are focuses on a <em>behavioral</em> definition
+of class rather than a <em>code</em> definition of class. From the perspective of the defining 
+code (and type system) the class doesn&#39;t change.</p>
+
+<p>The distinction here is between:
+* apparent class - what kind of think does this object <em>behave</em> like?
+* actual class - which class&#39;s constructor was used to instantiate ths object?</p>
+
+<h2 id="toc_33">Whatif a language allowed an object&#39;s actual class to to change</h2>
+
+<p>This would allow the use of combined <strong>State-Context</strong> objects 
+(remember in the canonical pattern, we&#39;re using different objects to change the 
+Context&#39;s behavior) and thus there would be differnet State-Context classes, 
+one for each state, and the object would migrate between them as its state changed.</p>
+
+<h2 id="toc_34">What kind of mechanisms could be used to implement this?</h2>
+
+<p>1&gt; become (_insanceOfAnotherClass_)  </p>
+
+<ul>
+<li>first, we&#39;d need  to instantiate <em>instanceOfAnotherClass</em> and initialize it with <em>this</em> object&#39;s current attrivutes.</li>
+<li><p><em>instanceOfAnotherClass</em>) may have more or fewer attributes than the class from which we are transforming.
+Thus we&#39;ll stipulate that the set of classes between which one can 
+migrate must suppor the unoin of the attriutes <em>required</em> by each of
+the classes in the set.  </p></li>
+<li><p>Finally, point all references to the original object to instance of another class</p></li>
+<li><p>Smalltalk supports this</p></li>
+</ul>
+
+<p>2&gt; changeClassToThatOf(_AnotherClass_)
+* we&#39;ll require that <em>ThisClass</em> and <em>AnotherClass</em> be drived from a common base class
+[note: this was not a requirement of <code>becomes()</code> above]<br>
+* the subclasses may not define additional instance variables<br>
+* supported by a dialect of smalltalk (IBM&#39;s VisualWorks Smalltalk)</p>
+
+<h1 id="toc_35">Consequences of class mgiration?</h1>
+
+<p>It makes subclassing the <code>Context</code> more difficult</p>
+
+<h1 id="toc_36">HW 04</h1>
+
+<p>If you really could change class, would there be any reason to use the
+State pattern? [200,500] words.</p>
+
+<h1 id="toc_37">Adminsitrivia</h1>
+
+<p>Read: Abstract Factory ( 87 ) &amp; bulider (97)</p>
+
+<h1 id="toc_38">State (305) Cont.)</h1>
+
+<h2 id="toc_39">Implementation issues</h2>
+
+<p>How does the Context get updated on a state transition?</p>
+
+<p>The <strong>CState</strong> wil be responsible for &quot;setting&quot; the <strong>Context&#39;s</strong> state variable   </p>
+
+<ul>
+<li><p>Dirctly:
+context.state = FooState;</p>
+
+<p>directly</p></li>
+</ul>
+
+<p>n: 
+    context.setFooState();</p>
+
+<ul>
+<li>via a parametericed operation:
+context.setState( FooState );</li>
+</ul>
+
+<h2 id="toc_40">How does the CSTATE know its Context?</h2>
+
+<ul>
+<li>the Context passes a reekence to itself when forwarding request to the <strong>CState</strong>:
+this.state .foo(this ) ;</li>
+<li>the Context is passes to the <strong>Cstate</strong>&#39;s constrctor so that the <strong>CState</strong> can maintian a reference/ppointer to it.</li>
+<li>[requires language support]  CStae is a <em>nested class</em> and it implicitly know what it&#39;s context is
+and has acess to all the private stuff</li>
+</ul>
+
+<h2 id="toc_41">when are concrete stae objects instantiated?</h2>
+
+<ul>
+<li>Instantiaded as needed,  you have two options. 
+
+<ul>
+<li>Instantiate as needed, and discard on transition</li>
+<li>more complicated case is to each <strong>Context</strong> is isntatioated:
+
+<ul>
+<li>make all the possible <strong>CState</strong> object</li>
+</ul></li>
+</ul></li>
+</ul>
+
+<h1 id="toc_42">Where should data specific to one particularstate be localized?</h1>
+
+<p>any data that is specific to <em>a state</em> should be localized in corresponding <strong>CState</strong>.</p>
+
+<h1 id="toc_43">HW04 reduxQ: If you could really change class would there be any reason to use the state pattern?</h1>
+
+<p>A:
+    an (potential) unintended consequence: we could no longer use subclassing to extend Context related behaviorsthat&#39;s because instead of exting a <em>single</em>
+    context class, we would need to extend all the c__StateContext__ classes </p>
+
+<h1 id="toc_44">Abstract Factory (87)</h1>
+
+<h2 id="toc_45">Intent</h2>
+
+<p>Provide an interface for creating farmilies of related or dependent objects, without specificng their concrete classes.</p>
+
+<h2 id="toc_46">Motivation</h2>
+
+<p>The notion of a <strong>MenuBar</strong> having Menus 
+which ar ein tun composed of <strong>MenuItms</strong> 
+( and <strong>menu</strong> themselves <strong>MenuItems!</strong>)
+is a pretty common theme in GUI toolkits.
+<strong>Abstract Factory</strong> Lets you create instances of different product classes together</p>
+
+<p>[example: in java you can&#39;t mix Awt with swing component. In C++ you can&#39;t mix QT with  and GTK
+classes in a toolkit are meant to be used together.</p>
+
+<h1 id="toc_47">Implementation</h1>
+
+<p>Type 1: AF with FMs  </p>
+
+<ul>
+<li>Use inhertance to override the FMs the <strong>Creator</strong> that is the concreate abstract factories super type (CAF) is abstract (or interface)</li>
+<li><p>subclasses must implemnt the factory method for elach product type</p>
+
+<ul>
+<li>Microvariation: using constatnt methods.</li>
+</ul></li>
+<li><p>use inhheritance to overide the initalize</p>
+
+<ul>
+<li>  (the <strong>FMs</strong> are concrete: the <strong>Class</strong> objects are used to instantiate <strong>Products</strong></li>
+</ul></li>
+<li><p>override the intiliation code for each <strong>CCreator</strong></p></li>
+<li><p>FMs are written in terms of <strong>Class</strong> objects the <strong>Creator</strong> is abstract and has instance variables for each <strong>Product</strong> typeof hold <strong>Class</strong> objects</p></li>
+</ul>
+
+<p>... Stuff ...</p>
+
+<h1 id="toc_48">HW 05</h1>
+
+<p>1) Implementation techniques 3 &amp; 5 require <em>something</em> to configure to AF. Should that knowledge be localized? If so where?</p>
+
+<p>2) <em>Why</em> is it easier to extend a SF-based AF than a FM based on to support addition opperations?</p>
+
+<h1 id="toc_49">HW 05 redux</h1>
+
+<p>1) Yup!</p>
+
+<p>If so, where:
+either:<br>
+* in a <em>subclass</em> of the AF, <em>or</em>
+    * the (subclasses) AF&#39;s constrcutor would know what <strong>Product</strong> types to us
+* in a FM (better choice)</p>
+
+<p>Aside:</p>
+
+<div class="highlight"><pre><code class="java"><span class="kd">class</span> <span class="nc">ChowAF</span><span class="o">&lt;</span><span class="n">Budget</span><span class="o">,</span> <span class="n">Regular</span><span class="o">,</span> <span class="n">Splurge</span><span class="o">&gt;{</span>
+    <span class="n">Budget</span> <span class="n">b</span><span class="o">;</span>
+    <span class="n">Regular</span> <span class="n">r</span><span class="o">;</span>
+    <span class="n">Splurge</span> <span class="n">s</span><span class="o">;</span>
+    
+    <span class="n">ChowAF</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BudgetMeal</span><span class="o">();</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="k">new</span> <span class="n">RegularMeal</span><span class="o">();</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="k">new</span> <span class="n">SplurgeMeal</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="n">BudgetMeal</span> <span class="nf">makeBudgetMeal</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">b</span><span class="o">.</span><span class="na">clone</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="c1">// ...</span>
+<span class="o">}</span>
+</code></pre></div>
+
+<p>2)  Adding a new method to support the <strong>Product</strong> type will require that the base class/interface be modified, 
+necessitation the updating of all of its 
+subclasses so that they support the nuew operations</p>
+
+<h1 id="toc_50">Builder (97)</h1>
+
+<h2 id="toc_51">intent</h2>
+
+<p>Separate the construction of a complex obejct from its representation so that the same 
+construction process can create different representations</p>
+
+<h2 id="toc_52">Motivation</h2>
+
+<p>Consider the <em>process</em> of making a bacon+pineapple+jalapeno pizza:
+* prepare dough
+* slather with sauce
+* sprinkle with cheese
+* sprinkle with toppings
+    * bacon
+    * pineapple 
+    * jalapenos</p>
+
+<h2 id="toc_53">There are many possible variations within the same product type</h2>
+
+<ul>
+<li>small, medium, large, XXL</li>
+</ul>
+
+<h2 id="toc_54">Within the <em>actual</em> product type</h2>
+
+<ul>
+<li>Pizza</li>
+<li>depictions of pizzas (i.e., images)</li>
+<li>recipe: step-by-step instructions for making the pizza</li>
+<li>&amp;c.</li>
+</ul>
+
+<p>... Stuff ...</p>
+
+</div>
+
+
+            <div class="footer">
+              <div class="contact">
+                <p>
+                  Your Name<br />
+                  What You Are<br />
+                  your@email.com
+                </p>
+              </div>
+              <div class="contact">
+                <p>
+                  <a href="http://github.com/yourusername/">github.com/yourusername</a><br />
+                  <a href="http://twitter.com/yourusername/">twitter.com/yourusername</a><br />
+                </p>
+              </div>
+            </div>
+          </div>
+        </div> <!-- /container -->
+
+    </body>
+</html>
