@@ -6,10 +6,5 @@ public class Leaf extends Component {
     public Leaf (String s) {
         value = s;
     }
-
-    public String toString() {
-        String s = this.calculateIndent();
-        return this.calculateIndent() + "Leaf: "+value.toString();
-    }
 }
 

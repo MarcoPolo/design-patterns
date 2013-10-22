@@ -2,6 +2,14 @@ package hw6;
 
 public class LinkedComposite extends Component {
     private Node<Component> rootNode = null; 
+    protected String instanceID(){
+        return "Linked Composite";
+    }
+
+    public MyIterator CreateIterator(){
+        return new LinkedIterator<Component>(rootNode);
+    }
+    
     public LinkedComposite (Component... components) {
         for (int i = 0; i< components.length; i++){
             try {
@@ -12,22 +20,7 @@ public class LinkedComposite extends Component {
         }
     }
 
-    public String toString() {
-        String indent = calculateIndent();
-        String s = "";
-        Node<Component> node = rootNode;
-        while (node != null){
-            s += node.value.toString() + "\n";
-            node = node.next;
-        }
-        if ( s.equals("") ){
-            return indent + "LinkedComposite Containing: Nothing :( ";
-        }else{
-            return indent + "LinkedComposite Containing: \n"+s;
-        }
-    }
-
-    public Component remove(Component c) throws Exception{
+    public void doRemove(Component c) throws Exception{
         boolean found = false;
         Node<Component> node = rootNode;
 
@@ -38,7 +31,6 @@ public class LinkedComposite extends Component {
         }else{
             while (node.next != null){
                 if ( node.next.value == c ){
-                    node.next.value.setParent(null);
                     node.next = node.next.next;
                     found = true;
                     break;
@@ -50,10 +42,9 @@ public class LinkedComposite extends Component {
         if (!found){
             throw new Exception("Component wasn't in there, sorry");
         }
-        return c;
     }
 
-    public Component add(Component c) throws Exception{
+    public void doAdd(Component c) throws Exception{
         if (rootNode == null){
             rootNode = new Node<Component>(c);
         }else{
@@ -63,7 +54,5 @@ public class LinkedComposite extends Component {
             }
             node.next = new Node<Component>(c);
         }
-        c.setParent(this);
-        return c;
     }
 }

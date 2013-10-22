@@ -3,12 +3,17 @@ package hw6;
 
 public class ArrayComposite extends Component {
     private Component[] leaves; 
+    protected String instanceID(){
+        return "Array Composite";
+    }
+
     
     public MyIterator CreateIterator() throws Exception{
-        return (new ArrayIterator<Component>(leaves));
+        return new ArrayIterator<Component>(leaves);
     }
 
     public ArrayComposite (Component... components) {
+        leaves = new Component[components.length];
         for (Component c : components){
             try {
             add(c);

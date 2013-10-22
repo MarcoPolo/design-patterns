@@ -35,4 +35,30 @@ for example, using a proxy of an image in a page layout/desktop publishing appli
 This allows the application to delay loading the decompressed image into memory.
 
 ## Protection proxy
-Specifically oriented
+Specifically oriented towards controlling access to the subject. useful when we want to
+add the notion of permissions or limits to an object that doesn't already have them.
+
+* for example, limitng the number of pages that are passed to a (nurmall unrestred)
+  PrintQueue
+
+
+## Smart References
+Replacement for "naked pointers"
+
+* can perform addition actions when an object is accessed
+* can be used to share a single object, while making it appear as if there were many (all
+  with the same initial state).
+  * when a mutator is called on the proxy it clones the sahred state and modifies the
+    cloned data (thus implementing copy-on-write semantics).
+* can be used to maintain a count of the number of things referencng the shared object.
+    * when the count reaches 0... GC
+* can be used to load a persisten object into memory when it is first used
+    * as opposed to frst referenced
+* can be used to provide synchronization: ensure the object is "locked" before access is
+  granted
+
+# Note: copy-on-write semanticscan sig. reduce the cost of "copying" heavy-weibh object,
+because the work is deferred until absultiy necessary.
+    * this technique is widely used  by hacky code
+
+

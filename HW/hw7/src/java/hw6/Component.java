@@ -2,23 +2,30 @@ package hw6;
 
 public abstract class Component {
     private Component parent = null;
-    protected String instanceID = "Component";
+    protected String instanceID(){
+        return "Component";
+    }
 
     public MyIterator CreateIterator() throws Exception{
         throw new Exception("bro, there isn't an interator for this");
     }
 
-    public Component remove(Component c) throws Exception{
+    public MyIterator CreatePreOrderIterator() throws Exception{
+        return new PreOrderIterator<Component>(this);
+    }
+
+    public Component add(Component c) throws Exception{
         doAdd(c);
         c.parent = this;
         return c;
     }
 
-    public Component add(Component c) throws Exception{
+    public Component remove(Component c) throws Exception{
         doRemove(c);
         c.parent = null;
         return c;
     }
+    
 
     protected void doAdd(Component c) throws Exception{
         throw new Exception("Not implemented");
@@ -34,19 +41,9 @@ public abstract class Component {
 
     public String toString(){
         return (parent == null) ?
-            instanceID + "is the root" :
-            instanceID + " is the child of " + parent;
+            instanceID() + " is the root" :
+            instanceID() + " is the child of " + parent;
     }
 
-    protected String calculateIndent(){
-        //count how much it should indent
-        String indent = "";
-        Component parent = this.parent;
-        while (parent != null){
-            indent += "\t";
-            parent = parent.parent;
-        }
-        return indent;
-    }
 }
 

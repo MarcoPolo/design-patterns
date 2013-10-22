@@ -123,4 +123,19 @@ which tells the `ShapeVisitor` which of its visitX() it should execute.
       the control in the visitor
 
 
+# What does a Visitor do during a traversal?
+There are many possibilities; among them...  
+* Modify (some of) the visited objects  
+* accumumlate state based upon the attributes of
+  the visited objects  
+* construct an object structure based on the visited objects
+
+
+# Define the Visitor interface
+...
+
+# Define the Visitor Class(es)
+...
+
+
 

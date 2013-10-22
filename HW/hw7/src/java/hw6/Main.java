@@ -6,11 +6,37 @@ public class Main {
     public static void main(String [] args) {
         System.out.println("Stuff:");
         LinkedComposite lc = new LinkedComposite( new Leaf( "A" ), new Leaf( "B" ) ); 
-        ArrayComposite ac = new ArrayComposite( new Leaf( "C" ), lc, new Leaf( "D" ) );
+        LinkedComposite ac = new LinkedComposite( new Leaf( "C" ), lc, new Leaf( "D" ) );
+        Leaf a = new Leaf("A");
+
         ac.toString();
+        try{
+            System.out.println("PREorder stuff: ");
+            MyIterator i3 = ac.CreatePreOrderIterator();
+            System.out.println("K: "+ i3.currentItem());
+            i3.next();
+            System.out.println("Next one is1: "+ i3.currentItem());
+            i3.next();
+            System.out.println("Next one is2: "+ i3.currentItem());
+            i3.next();
+            System.out.println("Next one is3: "+ i3.currentItem());
+            i3.next();
+            System.out.println("Next one is4: "+ i3.currentItem());
+            i3.next();
+            System.out.println("Next one is5: "+ i3.currentItem());
+            i3.next();
+            System.out.println("Next one is6: "+ i3.currentItem());
+            i3.next();
+            System.out.println("Next one is7: "+ i3.currentItem());
+
+
+        }catch(Exception e){
+            System.out.println("e"+e);
+        }
+        System.out.println("Done");
+
         System.out.println(ac.toString());
 
-            Leaf a = new Leaf("A");
 
             Leaf c = new Leaf("C");
 
@@ -19,10 +45,7 @@ public class Main {
 
             lc = new LinkedComposite( a, new Leaf( "B" ) );
 
-            ac = new ArrayComposite( c, lc, new Leaf( "D" ) );
-            ac = new ArrayComposite( c, new Leaf( "D" ) );
-
-            ArrayIterator<Component> 
+            //ArrayIterator<Component> 
 
             System.out.println("EXPECTED OUTPUT---------");
 
