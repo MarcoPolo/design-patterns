@@ -7,11 +7,10 @@
             LispVisitor TextTreeVisitor EvaluatedVisitor InFixVisitor]))
 
 (def component->class 
-  {:+ #(AdditionComponent.)
-   :- #(SubtractComponent.)
-   :* #(MultiplyComponent.)
-   :div #(DivideComponent.)})
-
+  {`+ #(AdditionComponent.)
+   `- #(SubtractComponent.)
+   `* #(MultiplyComponent.)
+   `/ #(DivideComponent.)})
 
 (defn parse-list [l]
   (if (number? l)
@@ -21,8 +20,7 @@
       (.addChild component children)
       component)))
 
-
-(defn use-visitor [component visitor]
+(defn use-visitor [visitor component]
   (.acceptVisitor component visitor)
   (.toString visitor))
 
@@ -31,31 +29,21 @@
 (def eval-visitor  (EvaluatedVisitor.))
 (def text-tree-visitor (TextTreeVisitor.))
 
-(comment 
+(parse-list `(+ 1 2 3))
 
-  (use-visitor (parse-list [:+ 1 2 3 4]) s-exp-visitor)
-  (use-visitor (parse-list [:+ 1 2 3 4]) s-exp-visitor)
-  (use-visitor (parse-list [:+ 1 2 [:+ 3 4]]) s-exp-visitor)
 
-  (use-visitor (parse-list [:+ 1 2 [:+ 3 4 [:div 8 2] [:- 3 2]]]) s-exp-visitor)
-  (use-visitor (parse-list '(:+ 11 (:* (:div 1 2) (:- (:+ 3 -5) -45)) -23)) text-tree-visitor)
-
-  (use-visitor (parse-list '(:+ 11 (:* (:div 1 2) (:- (:+ 3 -5) -45)) -23)) eval-visitor)
-  (double (+ 11 (* (/ 1 2) (- (+ 3 -5) -45)) -23))
-
-  (use-visitor (parse-list '(:+ 2 (:* 4 5))) infix-visitor)
-
-  )
-
+;; Begin tests!
 
 
 (facts "about Lisp expression"
-  (use-visitor (parse-list [:+ 1 2 3 4]) eval-visitor)   => "10.0"
-  (use-visitor (parse-list [:+ 1 2 3 4]) s-exp-visitor)  => "(+ 1.0 2.0 3.0 4.0)"
-  (use-visitor (parse-list [:+ 1 2 [:+ 3 4]]) s-exp-visitor) => "(+ 1.0 2.0 (+ 3.0 4.0))"
-  (use-visitor (parse-list [:+ 1 2 [:+ 3 4 [:div 8 2] [:- 3 2]]]) s-exp-visitor) 
-       => "(+ 1.0 2.0 (+ 3.0 4.0 (/ 8.0 2.0) (- 3.0 2.0)))"
-  (use-visitor (parse-list '(:+ 11 (:* (:div 1 2) (:- (:+ 3 -5) -45)) -23)) text-tree-visitor)
+  (use-visitor eval-visitor (parse-list `(+ 1 2 3 4)))   => "10.0"
+  (use-visitor s-exp-visitor (parse-list `(+ 1 2 3 4)))  => "(+ 1.0 2.0 3.0 4.0)"
+  (use-visitor s-exp-visitor (parse-list `(+ 1 2 (+ 3 4)))) => "(+ 1.0 2.0 (+ 3.0 4.0))"
+  (use-visitor s-exp-visitor (parse-list `(+ 1 2 (+ 3 4 [/ 8 2] [- 3 2])))) 
+       => "(+ 1.0 2.0 (+ 3.0 4.0 (/ 8.0 2.0) (- 3.0 2.0)))")
+
+(facts "about Text Trees"
+  (use-visitor text-tree-visitor (parse-list `(+ 11 (* (/ 1 2) (- (+ 3 -5) -45)) -23)))
        => 
 "
 [+]
@@ -70,10 +58,23 @@
  |         |    +---[-5.0]
  |         +---[-45.0]
  +---[-23.0]
-"
-  (use-visitor (parse-list '(:+ 11 (:* (:div 1 2) (:- (:+ 3 -5) -45)) -23)) eval-visitor) => "9.5"
-  (use-visitor (parse-list '(:+ 2 (:* 4 5))) infix-visitor) => "(2.0 + (4.0 * 5.0))"
+")
 
+
+
+(facts "about Eval Visitor"
+  (let [eval-visitor (partial use-visitor eval-visitor)]
+    (eval-visitor (parse-list `(+ 11 (* (/ 1 2) (- (+ 3 -5) -45)) -23))) => "9.5"
+    (eval-visitor (parse-list `(+ 5 (- 4 2 (- (+ 3 -5) -45)) -23))) => (str (double (+ 5 (- 4 2 (- (+ 3 -5) -45)) -23)))
+    ;; Might as well test a bunch of stuff!
+    (doseq [x (range 5 10) y (range 2 10) z (range 1 5)
+            :let [test-list `(+ ~x  ~y (- ~x (- ~z (* ~y ~x))) (/ ~z 2)) ]]
+        (Double. (eval-visitor (parse-list test-list))) => (double (eval test-list)))))
+
+(facts "about Infix Visitor"
+  (use-visitor infix-visitor (parse-list `(+ 2 (* 4 5)))) => "(2.0 + (4.0 * 5.0))"
+  (use-visitor infix-visitor (parse-list `(- 2 (* (/ 4 5) (+ 7 8))))) => "(2.0 - ((4.0 / 5.0) * (7.0 + 8.0)))"
+  (use-visitor infix-visitor (parse-list `(/ 1 (/ 5 (+ 7 8))))) => "(1.0 / (5.0 / (7.0 + 8.0)))"
        )
 
 
