@@ -27,4 +27,10 @@ support the notion of private (impomentation) inheritance
 the type is not inherited, only the code is. In C++ all the operations become 
 private in the subclass regardless of  their original access modifiers.
 
+# Tailored object adapter
+Define a class that implments the desired interfae (e.g., Stack) in terms of
+forwarding calls to the existing class's operations. relies on object
+composition.
 
+## Pluggable adapters
+The class that the (client) code is mean to work with is unknown!
