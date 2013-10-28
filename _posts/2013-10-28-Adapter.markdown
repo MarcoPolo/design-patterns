@@ -3,21 +3,26 @@ layout: post
 title:  "Adapter" 
 ---
 
-# Administrivia  Read Adapter No class this friday
+# Administrivia     
+Read Adapter   
+No class this friday  
 
-# Adapter (139)   ## Intent Convert the interface of a class into another
+# Adapter (139)     
+## Intent Convert the interface of a class into another
 intercace that clients expect. Adpater lets classes work together that coudn't
 otherwise becuse of incompatible interfaces.
 
 ## Varieties There are four
 
-## Tailored adapters There is aan existing class that has the functionality we
+## Tailored adapters   
+There is aan existing class that has the functionality we
 need, but it lacks the required interface.
 
 simple example: a linkedList won't (shouldn't) have operations name push(),
 pop(), & poeek() but it will almost certainly have equivalent functionalities.
 
-## Tailored Class adapterDefine a subclass of the exiting class (.e.g.,
+## Tailored Class adapter
+Define a subclass of the exiting class (.e.g.,
 LnkedList) that implemtns the desired interface (Stack) in terms of the existing
 class's operations:
 
@@ -34,3 +39,30 @@ composition.
 
 ## Pluggable adapters
 The class that the (client) code is mean to work with is unknown!
+We'll define an interface so that we can work with this unkown class. iIn other
+words, we want to write a class today that, in order to do its job, that will
+need to work with calsses that we can't foresee.
+
+The implmentor (of the class we are writing today) must identify all operations
+the Adaptee needs to support in order for this class to do its job. We will
+write code in terms of those (unimplemented) operations.
+
+## TreeDisplay defines
+
+* the target interface, and
+* since it also uses the traget interface, it is also the (target interface's)
+  client
+
+## FilesystemEntity is the _Adaptee_  
+
+* it is the unforeseen class whose abilities we now want to use in the context
+  of displaying trees. 
+
+## DirectorTreeDisplay is the Adapater  
+
+* enables the _Client_ (TreeDisplay) to use the functionalities of the _Adaptee_
+  (*FileSystemEntity*) by adapting it to the target intercae.
+
+
+Note: this all hinges on the abstract class operations - which are implmented by
+the _Adapter_.
