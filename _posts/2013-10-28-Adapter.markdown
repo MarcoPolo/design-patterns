@@ -1,16 +1,21 @@
----
-layout: post
-title:  "Proxy"
----
+--- layout: post title:  "Proxy" ---
 
-# Administrivia  
-Read Adapter
-No class this friday
+# Administrivia  Read Adapter No class this friday
 
-# Adapter (139)   
-## Intent
-Convert the interface of a class into another intercace that clients expect. Adpater lets classes work together that coudn't otherwise becuse of incompatible interfaces.
+# Adapter (139)   ## Intent Convert the interface of a class into another
+intercace that clients expect. Adpater lets classes work together that coudn't
+otherwise becuse of incompatible interfaces.
 
-## Varieties
-There are four
+## Varieties There are four
+
+## Tailored adapters There is aan existing class that has the functionality we
+need, but it lacks the required interface.
+
+simple example: a linkedList won't (shouldn't) have operations name push(),
+pop(), & poeek() but it will almost certainly have equivalent functionalities.
+
+## Tailored Class adapterDefine a subclass of the exiting class (.e.g.,
+LnkedList) that implemtns the desired interface (Stack) in terms of the existing
+class's operations:
+
 
