@@ -1,4 +1,7 @@
---- layout: post title:  "Proxy" ---
+---
+layout: post 
+title:  "Adapter" 
+---
 
 # Administrivia  Read Adapter No class this friday
 
@@ -17,5 +20,11 @@ pop(), & poeek() but it will almost certainly have equivalent functionalities.
 ## Tailored Class adapterDefine a subclass of the exiting class (.e.g.,
 LnkedList) that implemtns the desired interface (Stack) in terms of the existing
 class's operations:
+
+Note: some languages (e.g., C++)
+support the notion of private (impomentation) inheritance
+
+the type is not inherited, only the code is. In C++ all the operations become 
+private in the subclass regardless of  their original access modifiers.
 
 

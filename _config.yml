@@ -5,3 +5,4 @@ redcarpet:
 pygments: true
 safe: true
 permalink: :year/:month/:day/:title.html
+destination: design-patterns
