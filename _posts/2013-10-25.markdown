@@ -1,0 +1,21 @@
+---
+layout: post
+title:  "Proxy"
+---
+
+# Term Project ideas
+
+Design a full-featured _programmer's editor_   
+* anti-goal: clone an existing editing paradigm
+* goal: devise a new, programmer-enabling way of entering & presenting code, and related information
+
+
+   
+Form 10 teams, each with 5 members
+* brain storm ideas: formal deliverable on Monday (see deliverable format)
+
+sdfk
+asjdfj
+
+asdjf
+ajdsfkj

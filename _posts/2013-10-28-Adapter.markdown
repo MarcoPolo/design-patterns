@@ -1,0 +1,16 @@
+---
+layout: post
+title:  "Proxy"
+---
+
+# Administrivia  
+Read Adapter
+No class this friday
+
+# Adapter (139)   
+## Intent
+Convert the interface of a class into another intercace that clients expect. Adpater lets classes work together that coudn't otherwise becuse of incompatible interfaces.
+
+## Varieties
+There are four
+
