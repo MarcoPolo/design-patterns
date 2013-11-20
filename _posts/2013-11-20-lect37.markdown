@@ -1,0 +1,63 @@
+---
+layout: post
+title:  Facade Pt.2
+---
+
+# Administrivia
+* Read: Singleton (127) & Chain of Responsibilities (223)
+* Exam 3 Friday night
+* focus is on material not on exams 1 7 2
+    * Read foreword and afterword 
+    * Read chapter 2
+
+# Facade (185)
+## Implementation notes  
+Avoid returning subsytems objects to the client
+* to do otherwise would coupe the client with subsytem internals :(
+* but, it may not be avoidable
+
+When developing an application
+* use a `Facade` to "hide" an evolving system  
+* avoids writing code in terms of a set of potentially transitory
+  classes/operations  
+
+
+# Using multiple Facades
+When there are multiple subsystems with (at least conceputally) the same
+responsibilies, each can have a `Facade` that implements a _common interface_  
+
+* allows code to work with the subsystems interchangablekjo
+
+Consider netwworking subsystems, each of which implments a different protocol
+e.g., TCP/IP, IPX, NETBIOS, &C.) but have a common set of abstract operations   
+
+* connect  
+* disconnect   
+* send buffer  
+* receive a buffer  
+
+By defining a common interface, we can now implment software that is protocol
+independent. (even using more than on protocol in the same application).
+
+## Common mistake  
+### subclassing the `Facade` to add new behavior  
+
+A facade is meant to simplify access, not add behavior
+A `Facade` is intended to simplify and centralize access (to a subsystem), _not_
+add behaviors
+
+Turning the `Facade` into a "manager"  
+The `Facade` should not reimplemnt functionality provided by the subsystem  
+
+* doing so would very likely result in a "god" object
+
+___Failing to provide a _clean_ interface___
+it should _simplify_ access.   
+
+## When implemnting a `Facade`, remember...   
+* a message should perform a complete, complex action  
+* it's not a `FActor` that returns  subsystem objects
+* the client says, "do X" and the `Facade` does `all` the the required work
+  
+
+

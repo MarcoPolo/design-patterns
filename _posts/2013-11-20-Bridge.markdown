@@ -1,0 +1,62 @@
+---
+layout: post
+title:  Bridge
+---
+
+# Intent
+Decouple an abstraction from it implemntation so that the two can vary
+independently.
+
+# Initial comments  
+Recall the dictum: _program to an interface, not an implementation_   
+   
+| language construct     |    semantic meaning      | bridge pattern |
+|------------------------|--------------------------|----------------| 
+|interface               | type                     | abstraction    | 
+|class                   | implmentation            | class          | 
+
+While a ingle type hay have many implementing classes, when we consider a
+specific object, that object's class binds together the interface &
+implementation.
+
+Bridge splits the _interface_ and _implementation_ 
+
+# Bridge is a special case of _Collaborating Hierarchies_  
+with Bridge, the Abstraction and Implementor vary *Independently*. However, the
+client _always and only_ collaborates with the _Abstraction_. (The implementor
+is hidden and does not have a "public" interface for Clients-it has only a
+privileged interface for the _Abstractions_ to use).
+
+--------
+
+# Towards the Bridge pattern: successive designs   
+We've been tasked with `tigerCAD`.
+  
+*  our application offloads the responsibility for drawing to the CAD program
+
+## Problem
+What happens when we have customers wanting to use our app with different cad
+program (whose interface is incompatible with `TigerCAD's`)?
+
+## Solution: take 1
+
+// pic  
+
+## Solution: Take 2
+// pic
+
+Note: we've lost the specialized shape types (e.g., Circle, Rectangle, &c.)  
+* probably not going to be an issue
+
+How could custom (unanticipated) shapes (e.g., Trapezoid) be handled?
+* Introduce [empty] interfaces for the classes to "implement"
+* to use the _Visitor_ pattern, make the visitor responsible   
+
+## Solution: Take 3  => Bridge
+
+// pic
+  
+The _Abstraction_ [Shape] has been separated from the _implmentation_ [Drawing]
+
+How do the specialized _Abstractions_ access the implementor?  
+* make ... [next time]
