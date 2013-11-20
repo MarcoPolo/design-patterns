@@ -1,0 +1,69 @@
+---
+layout: post
+title:  "Mediator"
+---
+
+# Adminsitrivia
+
+* read: Bridge (151)
+
+# Mediator (273)
+
+Initial comments
+Example: good use of Mediator [cont.]
+how to avoid encumbering the widgets ?
+Define the interactions between the GUI widgets using a `Mediator`
+
+///
+
+----
+
+# MVC evolved
+Model View Controller
+
+
+As the MVC evolved, it was realized that it would make more sense to factor models into twoparts:
+
+## Domain Model (DM)
+The "business" objects: they have no concpt of userinterfaces or how they will be displyed. They'll work just fine, even if there is no user interface.
+
+## Application Model (AM)
+provides UI Support. The view is stil responsible for doing the displaying. the AM provides the support the _View_ needs.
+Typically, AM objects contain little state: instead, an AM object derives it state form (one or more) DM objects.
+
+* acts as an Adapter by converting the domain interface to the interface the _View_ expects
+* Provides resources that are not part of the _domain_ (e.g., the conept of menus)
+* Serves as a `Mediator` to coordinate the _View_ widgets.
+
+## Value-Holder model
+
+Consider a system where a user types a _name_
+
+* the AM asks the DM if there is an _age_ associated with the _name_
+* if so, the AM tells the `NumericaValueHolder` to update its value
+  * which in turn, causes the `Numeric textArea` to display the age.
+
+# Closing comments
+colleagues
+
+
+Colleaues are highle reusable
+
+* because they are not enucumbered with application specific crap
+
+
+-----
+
+# Mediators
+Mediators tend not to be reusable
+
+* because they implement context specific behaviors (i.e. crap)
+
+
+# Conclusion
+Generally, If an object is encapsulating a complex behavior limited to
+a well defined subsystem, it is probalby a `Mediator`. But if it has too
+many responsibilities, or crosses conceptual boundaries, it is probably
+an evild god object, and one should destroy it.
+
+
