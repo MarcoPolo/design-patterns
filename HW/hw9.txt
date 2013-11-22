@@ -1,0 +1,42 @@
+## HW 9 Part I
+What pattern or patterns does SASE use (other than `Observer`)? Justify your
+answer.
+
+SASE can make use of the prototype pattern. By having a prototype come along
+with the event, actions can fill in only information they care about, and the
+sender of SASE can prefill the rest of the prototype. Imagine a case where a
+user typed their username in a field. The observer creates a clone of a
+prototype object with the information it knows, and hands it to the `Subject`.
+The subject would then change just the username, because that is all it knows,
+and return the object back to the `Observer`.
+
+SASE can also make use of the template method. If there are several different
+messages that all differ in a step, it can use the template method to reconcile
+all the differences. Say there was a general pattern for what should happen when
+an event sends the SASE, it should read some field and save the field to a
+database. Using template method you can allow subclasses to override what field
+they care about, and what database they want to connect to.
+
+SASE could also make use of the Decorator pattern. If some detail to the message
+was the same across different messages, a decorator would allow the ability to
+write their similarities in one location, and decorate whatever needs it. If
+messages differed in their specific event, a special Event decorator could be
+used that would decorate the specific event to the message.
+
+## HW 9 Part II
+Make a convincing case for Command and Adapter for both being valid patterns for
+`ActionListener`.
+
+### Adapter
+The Adapter pattern would be useful for `ActionListener` so that `Subject`s can
+be written without any attention to the specifics of the observer. It results in
+different types of JComponent all working similarly.
+
+### Command
+It would be useful to specify what to do with an action separate to the thing
+observing the action. Command allows decoupling the implementation logic from the wiring
+logic. If multiple actions result in the same thing, command would allow for
+reuse. If multiple Observers did a database transaction ritual, that ritual can
+be placed in a Command to keep the implementation from repeating itself.
+
+
