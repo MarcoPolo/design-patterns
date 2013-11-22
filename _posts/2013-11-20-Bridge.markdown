@@ -59,4 +59,26 @@ How could custom (unanticipated) shapes (e.g., Trapezoid) be handled?
 The _Abstraction_ [Shape] has been separated from the _implmentation_ [Drawing]
 
 How do the specialized _Abstractions_ access the implementor?  
-* make ... [next time]
+* make imp a protected member of `Shape`  
+* glassbox inheritance :(  
+* couples specialized _Abstractions_ to the class `Shapes`'s implementation 
+  
+//option 2  
+
+* make `Shape` support an accessor method to return a reference/pointer to imp  
+* blackbox inheritance :)   
+* couples specializes _Abstractions_ to the class's `Shape`'s interface
+
+// option 3     
+
+* implement protected _concrete_ operations in the _Abstraction_ class  
+-----  
+
+* draw() would be defnined in terms of the protected operations   
+* the protected operation named do not have to conform to the _Implementation_
+  operation names.
+* can help eliminate replicated code ( when the Abstraction operations are at a
+  higher level of abstraction than the _Implementation_ i.e., it may require
+  multiple _Implmenetation_ ops to be called [consider the imp providing arcs
+  and line segments, but we want to do things like draw polygons and circles
+
